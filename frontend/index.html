@@ -729,7 +729,75 @@
 
           </div>
 
-          <!-- Placeholder container for other tabs (Surveillance, Lookup, Alerts) -->
+          <!-- ============================================================
+               SLOT 2: HIGH SURVEILLANCE PAGE
+               ============================================================ -->
+          <div id="high-surveillance-view" class="dashboard-subview" style="display: none;">
+            
+            <!-- Page Header -->
+            <div class="ward-page-header">
+              <h1 class="ward-page-title">High surveillance</h1>
+              <p class="ward-page-subtitle">Patients with medium/high risk or a rising trend (early warning).</p>
+            </div>
+
+            <!-- High Surveillance Summary Strip -->
+            <div class="surveillance-summary-strip">
+              <div class="surveillance-count-headline">
+                <span class="patient-total-badge" id="surveillance-total-count">5 patients</span>
+                <span class="surveillance-label-sub">trending toward deterioration</span>
+              </div>
+              <div class="surveillance-risk-pills">
+                <span class="summary-risk-item item-high">
+                  <span class="summary-dot dot-high" aria-hidden="true"></span>
+                  <span id="surveillance-high-count">2 high</span>
+                </span>
+                <span class="summary-risk-item item-medium">
+                  <span class="summary-dot dot-medium" aria-hidden="true"></span>
+                  <span id="surveillance-medium-count">2 medium</span>
+                </span>
+                <span class="summary-risk-item item-low">
+                  <span class="summary-dot dot-low" aria-hidden="true"></span>
+                  <span id="surveillance-low-count">1 low (rising)</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Patient Scanning List Table Card -->
+            <div class="ward-table-wrapper surveillance-table-wrapper">
+              <div class="ward-table-header" role="row">
+                <div class="col-tier" aria-hidden="true"></div>
+                <div class="col-bed">Bed</div>
+                <div class="col-patient">Patient</div>
+                <div class="col-why">Why / current status</div>
+                <div class="col-updated">Last updated</div>
+                <div class="col-news2">NEWS2</div>
+                <div class="col-trend">Trend</div>
+                <div class="col-action" aria-hidden="true"></div>
+              </div>
+
+              <!-- Filtered High Surveillance Patient Rows Container -->
+              <div class="ward-table-body" id="surveillance-patient-list" role="rowgroup">
+                <!-- Dynamically populated by script.js -->
+              </div>
+            </div>
+
+            <!-- Reassuring Catch-Up / Empty State Card (matching reference image) -->
+            <div class="caught-up-panel" id="caught-up-banner">
+              <div class="caught-up-icon-wrap" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#216A86" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="20" x2="18" y2="10"></line>
+                  <line x1="12" y1="20" x2="12" y2="4"></line>
+                  <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+              </div>
+              <h2 class="caught-up-title">You're all caught up</h2>
+              <p class="caught-up-text">No other patients are currently trending toward deterioration.</p>
+              <p class="caught-up-subtext">We'll keep monitoring and show new alerts here as they appear.</p>
+            </div>
+
+          </div>
+
+          <!-- Placeholder container for other tabs (Lookup, Alerts) -->
           <div id="generic-tab-placeholder" class="dashboard-subview" style="display: none;">
             <div class="slot-placeholder-center">
               <div class="illustration-container">

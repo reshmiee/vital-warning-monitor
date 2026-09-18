@@ -1727,6 +1727,93 @@ p {
   font-size: 0.95rem;
 }
 
+/* ==========================================================================
+   HIGH SURVEILLANCE PAGE STYLES
+   ========================================================================== */
+.surveillance-summary-strip {
+  background-color: #FFFFFF;
+  border: 1px solid #E2EBF2;
+  border-radius: 10px;
+  padding: 14px 22px;
+  margin-bottom: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  box-shadow: 0 1px 3px rgba(11, 31, 65, 0.02);
+}
+
+.surveillance-count-headline {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.surveillance-label-sub {
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  color: #475569;
+  font-weight: 400;
+}
+
+.surveillance-risk-pills {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.surveillance-table-wrapper {
+  margin-bottom: 24px;
+}
+
+/* Reassuring Catch-Up Empty / Monitoring State Banner */
+.caught-up-panel {
+  background-color: #FFFFFF;
+  border: 1px solid #E2EBF2;
+  border-radius: 14px;
+  padding: 44px 32px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(11, 31, 65, 0.02);
+}
+
+.caught-up-icon-wrap {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: #E8F3F8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+
+.caught-up-title {
+  font-family: var(--font-serif);
+  font-size: 1.85rem;
+  font-weight: 600;
+  color: #0B1F41;
+  letter-spacing: -0.3px;
+  margin-bottom: 8px;
+}
+
+.caught-up-text {
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  color: #475569;
+  margin-bottom: 4px;
+}
+
+.caught-up-subtext {
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  color: #64748B;
+}
+
 /* Generic slot center container */
 .slot-placeholder-center {
   text-align: center;

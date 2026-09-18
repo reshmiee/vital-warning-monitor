@@ -1,10 +1,10 @@
 /**
  * Sentinel / CareSight — Patient Deterioration Forecasting System
- * Client-Side Router, Mock Authentication & Ward Overview Engine
+ * Client-Side Router, Mock Authentication, Ward Overview & High Surveillance Engine
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Page Containers
+  // Top-Level Page Containers
   const landingPageView = document.getElementById('landing-page');
   const loginPageView = document.getElementById('login-page');
   const dashboardShellView = document.getElementById('dashboard-shell');
@@ -24,15 +24,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const loginSubmitBtn = document.getElementById('login-submit-btn');
   const signingInState = document.getElementById('signing-in-state');
 
-  // Dashboard Shell Slots & Controls
+  // Dashboard Subviews
   const wardOverviewView = document.getElementById('ward-overview-view');
+  const highSurveillanceView = document.getElementById('high-surveillance-view');
   const genericTabPlaceholder = document.getElementById('generic-tab-placeholder');
   const slotHeading = document.getElementById('slot-heading');
   const slotSubtitle = document.getElementById('slot-subtitle');
   const slotDescription = document.getElementById('slot-description');
   const sidebarNavLinks = document.querySelectorAll('.dashboard-sidebar .nav-link');
 
-  // Ward Overview Controls & Elements
+  // Ward Overview Elements
   const patientListContainer = document.getElementById('patient-list-container');
   const wardSortSelect = document.getElementById('ward-sort-select');
   const summaryTotalCount = document.getElementById('summary-total-count');
@@ -41,7 +42,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const summaryLowCount = document.getElementById('summary-low-count');
   const wardEmptyState = document.getElementById('ward-empty-state');
 
-  // Mock Patient Dataset (14 Patients from Prompt & Reference Image)
+  // High Surveillance Elements
+  const surveillancePatientList = document.getElementById('surveillance-patient-list');
+  const surveillanceTotalCount = document.getElementById('surveillance-total-count');
+  const surveillanceHighCount = document.getElementById('surveillance-high-count');
+  const surveillanceMediumCount = document.getElementById('surveillance-medium-count');
+  const surveillanceLowCount = document.getElementById('surveillance-low-count');
+  const caughtUpBanner = document.getElementById('caught-up-banner');
+
+  // Shared Mock Patient Dataset (Single Source of Truth across all views)
   const mockPatients = [
     {
       bedNumber: "4B-07",
@@ -139,8 +148,8 @@ document.addEventListener('DOMContentLoaded', () => {
       demographics: "M, 77",
       currentScore: 3,
       tier: "low",
-      trend: "falling",
-      whyOneLine: "Heart rate improving",
+      trend: "rising", // Surfaced in High Surveillance as early warning
+      whyOneLine: "Heart rate increasing",
       lastUpdated: "18 min ago"
     },
     {
@@ -185,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   ];
 
-  // Placeholder Definitions for Other Dashboard Tabs
+  // Nav metadata for fallback/upcoming tabs
   const navContentMap = {
     ward: {
       heading: 'Ward overview',
@@ -194,8 +203,8 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     surveillance: {
       heading: 'High surveillance',
-      subtitle: 'High surveillance content goes here.',
-      description: 'This is a placeholder for the High surveillance list. Replace this section with deteriorating patients sorted worst-first.'
+      subtitle: 'Patients with medium/high risk or a rising trend (early warning).',
+      description: ''
     },
     lookup: {
       heading: 'Patient lookup',
@@ -215,7 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
    * @param {string} sortBy - 'risk' | 'bed' | 'name'
    * @returns {Array} sorted array
    */
-  function sortPatients(patients, sortBy) {
+  function sortPatients(patients, sortBy = 'risk') {
     const list = [...patients];
 
     if (sortBy === 'bed') {
@@ -245,37 +254,15 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /**
-   * Render the patient scanning list into the table container
+   * Reusable Component: Render compact status rows into a target container
+   * Shared by Ward Overview and High Surveillance for 100% visual consistency
+   * @param {Array} patients 
+   * @param {HTMLElement} targetContainer 
    */
-  function renderWardPatients() {
-    if (!patientListContainer) return;
+  function renderPatientRows(patients, targetContainer) {
+    if (!targetContainer) return;
 
-    const currentSort = wardSortSelect ? wardSortSelect.value : 'risk';
-    const sorted = sortPatients(mockPatients, currentSort);
-
-    // Update summary counts
-    if (summaryTotalCount) summaryTotalCount.textContent = `${sorted.length} patients`;
-    
-    const highCount = sorted.filter(p => p.tier === 'high').length;
-    const medCount = sorted.filter(p => p.tier === 'medium').length;
-    const lowCount = sorted.filter(p => p.tier === 'low').length;
-
-    if (summaryHighCount) summaryHighCount.textContent = `${highCount} high`;
-    if (summaryMediumCount) summaryMediumCount.textContent = `${medCount} medium`;
-    if (summaryLowCount) summaryLowCount.textContent = `${lowCount} low`;
-
-    // Handle Empty State
-    if (sorted.length === 0) {
-      patientListContainer.innerHTML = '';
-      if (wardEmptyState) wardEmptyState.style.display = 'block';
-      return;
-    } else {
-      if (wardEmptyState) wardEmptyState.style.display = 'none';
-    }
-
-    // Generate Rows HTML
-    patientListContainer.innerHTML = sorted.map((p) => {
-      // Trend symbol and label
+    targetContainer.innerHTML = patients.map((p) => {
       let trendText = '— Stable';
       let trendClass = 'trend-stable';
 
@@ -330,18 +317,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }).join('');
 
     // Attach Row Click Events
-    const rows = patientListContainer.querySelectorAll('.patient-row');
+    const rows = targetContainer.querySelectorAll('.patient-row');
     rows.forEach((row) => {
       row.addEventListener('click', () => {
         const bed = row.getAttribute('data-bed');
         const name = row.getAttribute('data-name');
         console.log(`[Patient Click] Selected ${name} (${bed}). Ready for Patient Full Report view.`);
-        // Pass selected patient info to session storage
         sessionStorage.setItem('selected_patient_bed', bed);
-        // Will route to #dashboard/patient/${bed} when Full Report is built
       });
 
-      // Keyboard Accessibility
       row.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
@@ -351,7 +335,74 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Bind Sort Dropdown Change
+  /**
+   * Render Ward Overview: All patients, unfiltered, with sort dropdown
+   */
+  function renderWardPatients() {
+    if (!patientListContainer) return;
+
+    const currentSort = wardSortSelect ? wardSortSelect.value : 'risk';
+    const sorted = sortPatients(mockPatients, currentSort);
+
+    // Update summary counts
+    if (summaryTotalCount) summaryTotalCount.textContent = `${sorted.length} patients`;
+    
+    const highCount = sorted.filter(p => p.tier === 'high').length;
+    const medCount = sorted.filter(p => p.tier === 'medium').length;
+    const lowCount = sorted.filter(p => p.tier === 'low').length;
+
+    if (summaryHighCount) summaryHighCount.textContent = `${highCount} high`;
+    if (summaryMediumCount) summaryMediumCount.textContent = `${medCount} medium`;
+    if (summaryLowCount) summaryLowCount.textContent = `${lowCount} low`;
+
+    if (sorted.length === 0) {
+      patientListContainer.innerHTML = '';
+      if (wardEmptyState) wardEmptyState.style.display = 'block';
+    } else {
+      if (wardEmptyState) wardEmptyState.style.display = 'none';
+      renderPatientRows(sorted, patientListContainer);
+    }
+  }
+
+  /**
+   * Render High Surveillance: Filtered to patients trending toward deterioration
+   * Condition: p.tier === "high" || p.trend === "rising"
+   * Yields exactly the 5 patients from the reference image, sorted worst-first
+   */
+  function renderHighSurveillance() {
+    if (!surveillancePatientList) return;
+
+    // Filter logic: surfaces patients trending toward deterioration
+    const filtered = mockPatients.filter(p => p.tier === "high" || p.trend === "rising");
+    const sorted = sortPatients(filtered, 'risk');
+
+    // Update High Surveillance summary breakdown
+    if (surveillanceTotalCount) surveillanceTotalCount.textContent = `${sorted.length} patients`;
+
+    const highCount = sorted.filter(p => p.tier === 'high').length;
+    const medCount = sorted.filter(p => p.tier === 'medium').length;
+    const lowRisingCount = sorted.filter(p => p.tier === 'low' && p.trend === 'rising').length;
+
+    if (surveillanceHighCount) surveillanceHighCount.textContent = `${highCount} high`;
+    if (surveillanceMediumCount) surveillanceMediumCount.textContent = `${medCount} medium`;
+    if (surveillanceLowCount) surveillanceLowCount.textContent = `${lowRisingCount} low (rising)`;
+
+    // Render shared compact status rows
+    renderPatientRows(sorted, surveillancePatientList);
+
+    // Empty State / Caught-up panel handling
+    if (caughtUpBanner) {
+      caughtUpBanner.style.display = 'flex';
+      const caughtUpText = caughtUpBanner.querySelector('.caught-up-text');
+      if (sorted.length === 0) {
+        if (caughtUpText) caughtUpText.textContent = 'No patients are currently trending toward deterioration in this ward.';
+      } else {
+        if (caughtUpText) caughtUpText.textContent = 'No other patients are currently trending toward deterioration.';
+      }
+    }
+  }
+
+  // Bind Ward Sort Dropdown Change
   if (wardSortSelect) {
     wardSortSelect.addEventListener('change', () => {
       renderWardPatients();
@@ -364,7 +415,6 @@ document.addEventListener('DOMContentLoaded', () => {
    * @param {string} subView - 'ward' | 'surveillance' | 'lookup' | 'alerts'
    */
   function navigateTo(viewName, subView = 'ward') {
-    // Hide all views first
     if (landingPageView) landingPageView.classList.remove('active');
     if (loginPageView) loginPageView.classList.remove('active');
     if (dashboardShellView) dashboardShellView.classList.remove('active');
@@ -374,7 +424,6 @@ document.addEventListener('DOMContentLoaded', () => {
       window.scrollTo(0, 0);
       window.location.hash = 'login';
       
-      // Reset form states
       if (loginSubmitBtn) {
         loginSubmitBtn.disabled = false;
         loginSubmitBtn.style.opacity = '1';
@@ -395,7 +444,6 @@ document.addEventListener('DOMContentLoaded', () => {
       window.location.hash = `dashboard/${subView}`;
       switchDashboardSlot(subView);
     } else {
-      // Default: Landing page
       if (landingPageView) landingPageView.classList.add('active');
       window.scrollTo(0, 0);
       window.location.hash = 'landing';
@@ -407,7 +455,6 @@ document.addEventListener('DOMContentLoaded', () => {
    * @param {string} targetKey - 'ward' | 'surveillance' | 'lookup' | 'alerts'
    */
   function switchDashboardSlot(targetKey) {
-    // Update active class on sidebar navigation buttons
     sidebarNavLinks.forEach((btn) => {
       if (btn.getAttribute('data-target') === targetKey) {
         btn.classList.add('active');
@@ -418,10 +465,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (targetKey === 'ward') {
       if (wardOverviewView) wardOverviewView.style.display = 'block';
+      if (highSurveillanceView) highSurveillanceView.style.display = 'none';
       if (genericTabPlaceholder) genericTabPlaceholder.style.display = 'none';
       renderWardPatients();
+    } else if (targetKey === 'surveillance') {
+      if (wardOverviewView) wardOverviewView.style.display = 'none';
+      if (highSurveillanceView) highSurveillanceView.style.display = 'block';
+      if (genericTabPlaceholder) genericTabPlaceholder.style.display = 'none';
+      renderHighSurveillance();
     } else {
       if (wardOverviewView) wardOverviewView.style.display = 'none';
+      if (highSurveillanceView) highSurveillanceView.style.display = 'none';
       if (genericTabPlaceholder) {
         genericTabPlaceholder.style.display = 'block';
         const data = navContentMap[targetKey] || navContentMap.ward;
@@ -516,7 +570,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const passwordVal = passwordInput ? passwordInput.value.trim() : '';
       let hasError = false;
 
-      // Validate Username
       if (!usernameVal) {
         if (groupUsername) groupUsername.classList.add('has-error');
         hasError = true;
@@ -524,7 +577,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (groupUsername) groupUsername.classList.remove('has-error');
       }
 
-      // Validate Password
       if (!passwordVal) {
         if (groupPassword) groupPassword.classList.add('has-error');
         hasError = true;
@@ -534,7 +586,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (hasError) return;
 
-      // All fields valid: Trigger 'Signing in...' loading state
       if (loginSubmitBtn) {
         loginSubmitBtn.disabled = true;
         loginSubmitBtn.style.opacity = '0.75';
