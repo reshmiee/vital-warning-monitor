@@ -651,50 +651,113 @@
 
       </header>
 
-      <!-- Main Content Area: Reusable Slot Placeholder -->
+      <!-- Main Content Area: Reusable Slot Container -->
       <main class="dashboard-content-area">
         <div class="dashboard-main-panel" id="dashboard-content-slot">
           
-          <div class="slot-placeholder-center">
-            <!-- Patient Dashboard Illustration matching reference image -->
-            <div class="illustration-container">
-              <div class="illustration-blob" aria-hidden="true"></div>
-              <div class="illustration-card">
-                <svg viewBox="0 0 140 100" class="illustration-svg" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <!-- Main card outline -->
-                  <rect x="10" y="8" width="120" height="84" rx="8" stroke="#D0DFE8" stroke-width="2" fill="#FFFFFF"/>
-                  
-                  <!-- Patient badge on left -->
-                  <circle cx="30" cy="30" r="10" fill="#216A86" opacity="0.15"/>
-                  <circle cx="30" cy="27" r="4.5" fill="#216A86"/>
-                  <path d="M22 36C22 33 25.5 32 30 32C34.5 32 38 33 38 36" fill="#216A86"/>
-                  
-                  <!-- Horizontal text mock lines -->
-                  <line x1="48" y1="24" x2="86" y2="24" stroke="#8EA4B2" stroke-width="3" stroke-linecap="round"/>
-                  <line x1="48" y1="34" x2="72" y2="34" stroke="#CBD9E2" stroke-width="2.5" stroke-linecap="round"/>
-                  
-                  <line x1="20" y1="52" x2="65" y2="52" stroke="#8EA4B2" stroke-width="2.5" stroke-linecap="round"/>
-                  <line x1="20" y1="62" x2="52" y2="62" stroke="#CBD9E2" stroke-width="2" stroke-linecap="round"/>
-                  <line x1="20" y1="72" x2="40" y2="72" stroke="#CBD9E2" stroke-width="2" stroke-linecap="round"/>
+          <!-- ============================================================
+               SLOT 1: WARD OVERVIEW PAGE
+               ============================================================ -->
+          <div id="ward-overview-view" class="dashboard-subview active">
+            
+            <!-- Page Header -->
+            <div class="ward-page-header">
+              <h1 class="ward-page-title">Ward overview</h1>
+              <p class="ward-page-subtitle">All patients in Ward 4B, sorted by clinical risk (highest first).</p>
+            </div>
 
-                  <!-- Trend line graph container on right -->
-                  <rect x="76" y="46" width="46" height="38" rx="4" fill="#F0F6FA" stroke="#D6E4ED" stroke-width="1.2"/>
-                  <!-- Rising trend trajectory line with nodes -->
-                  <polyline points="82,72 94,66 102,70 114,54" stroke="#216A86" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                  <circle cx="82" cy="72" r="2.5" fill="#216A86"/>
-                  <circle cx="94" cy="66" r="2.5" fill="#216A86"/>
-                  <circle cx="102" cy="70" r="2.5" fill="#216A86"/>
-                  <circle cx="114" cy="54" r="3" fill="#216A86"/>
-                </svg>
+            <!-- Ward Summary & Sort Controls Strip -->
+            <div class="ward-controls-strip">
+              <!-- Left: Risk Breakdown Counts -->
+              <div class="ward-summary-counts">
+                <span class="patient-total-badge" id="summary-total-count">14 patients</span>
+                <span class="summary-risk-item item-high">
+                  <span class="summary-dot dot-high" aria-hidden="true"></span>
+                  <span id="summary-high-count">2 high</span>
+                </span>
+                <span class="summary-risk-item item-medium">
+                  <span class="summary-dot dot-medium" aria-hidden="true"></span>
+                  <span id="summary-medium-count">3 medium</span>
+                </span>
+                <span class="summary-risk-item item-low">
+                  <span class="summary-dot dot-low" aria-hidden="true"></span>
+                  <span id="summary-low-count">9 low</span>
+                </span>
+              </div>
+
+              <!-- Right: Sort Control -->
+              <div class="ward-sort-box">
+                <label for="ward-sort-select" class="sort-label">Sort by</label>
+                <div class="sort-select-container">
+                  <select id="ward-sort-select" class="sort-select" aria-label="Sort patients list">
+                    <option value="risk">Clinical risk (default)</option>
+                    <option value="bed">Bed number</option>
+                    <option value="name">Patient name</option>
+                  </select>
+                  <span class="sort-chevron-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </span>
+                </div>
               </div>
             </div>
 
-            <!-- Headings & Copy -->
-            <h1 class="slot-heading" id="slot-heading">Ward overview</h1>
-            <p class="slot-subtitle" id="slot-subtitle">Ward overview content goes here.</p>
-            <p class="slot-description" id="slot-description">
-              This is a placeholder for the Ward overview page. Replace this section with the actual patient list and status cards.
-            </p>
+            <!-- Patient Scanning List Table Card -->
+            <div class="ward-table-wrapper">
+              <div class="ward-table-header" role="row">
+                <div class="col-tier" aria-hidden="true"></div>
+                <div class="col-bed">Bed</div>
+                <div class="col-patient">Patient</div>
+                <div class="col-why">Why / current status</div>
+                <div class="col-updated">Last updated</div>
+                <div class="col-news2">NEWS2</div>
+                <div class="col-trend">Trend</div>
+                <div class="col-action" aria-hidden="true"></div>
+              </div>
+
+              <!-- Dynamic Patient Rows Container -->
+              <div class="ward-table-body" id="patient-list-container" role="rowgroup">
+                <!-- Patient rows dynamically populated by script.js -->
+              </div>
+
+              <!-- Empty State Notification -->
+              <div id="ward-empty-state" class="ward-empty-state" style="display: none;">
+                <p class="empty-state-text">No patients in this ward.</p>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Placeholder container for other tabs (Surveillance, Lookup, Alerts) -->
+          <div id="generic-tab-placeholder" class="dashboard-subview" style="display: none;">
+            <div class="slot-placeholder-center">
+              <div class="illustration-container">
+                <div class="illustration-blob" aria-hidden="true"></div>
+                <div class="illustration-card">
+                  <svg viewBox="0 0 140 100" class="illustration-svg" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="10" y="8" width="120" height="84" rx="8" stroke="#D0DFE8" stroke-width="2" fill="#FFFFFF"/>
+                    <circle cx="30" cy="30" r="10" fill="#216A86" opacity="0.15"/>
+                    <circle cx="30" cy="27" r="4.5" fill="#216A86"/>
+                    <path d="M22 36C22 33 25.5 32 30 32C34.5 32 38 33 38 36" fill="#216A86"/>
+                    <line x1="48" y1="24" x2="86" y2="24" stroke="#8EA4B2" stroke-width="3" stroke-linecap="round"/>
+                    <line x1="48" y1="34" x2="72" y2="34" stroke="#CBD9E2" stroke-width="2.5" stroke-linecap="round"/>
+                    <line x1="20" y1="52" x2="65" y2="52" stroke="#8EA4B2" stroke-width="2.5" stroke-linecap="round"/>
+                    <line x1="20" y1="62" x2="52" y2="62" stroke="#CBD9E2" stroke-width="2.5" stroke-linecap="round"/>
+                    <line x1="20" y1="72" x2="40" y2="72" stroke="#CBD9E2" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="76" y="46" width="46" height="38" rx="4" fill="#F0F6FA" stroke="#D6E4ED" stroke-width="1.2"/>
+                    <polyline points="82,72 94,66 102,70 114,54" stroke="#216A86" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="82" cy="72" r="2.5" fill="#216A86"/>
+                    <circle cx="94" cy="66" r="2.5" fill="#216A86"/>
+                    <circle cx="102" cy="70" r="2.5" fill="#216A86"/>
+                    <circle cx="114" cy="54" r="3" fill="#216A86"/>
+                  </svg>
+                </div>
+              </div>
+              <h2 class="slot-heading" id="slot-heading">Slot Title</h2>
+              <p class="slot-subtitle" id="slot-subtitle">Slot Subtitle</p>
+              <p class="slot-description" id="slot-description">Slot Description</p>
+            </div>
           </div>
 
         </div>

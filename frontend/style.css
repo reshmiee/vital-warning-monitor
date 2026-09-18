@@ -1405,58 +1405,341 @@ p {
   background-color: #FFFFFF;
   border: 1px solid #D6E0E8;
   border-radius: 24px;
-  padding: 48px 32px;
+  padding: 40px 44px;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
   min-height: calc(100vh - 140px);
   box-shadow: 0 4px 20px rgba(11, 31, 65, 0.02);
 }
 
+.dashboard-subview {
+  display: none;
+  width: 100%;
+}
+
+.dashboard-subview.active {
+  display: block;
+}
+
+/* ==========================================================================
+   WARD OVERVIEW PAGE STYLES
+   ========================================================================== */
+.ward-page-header {
+  margin-bottom: 24px;
+}
+
+.ward-page-title {
+  font-family: var(--font-serif);
+  font-size: 2.35rem;
+  font-weight: 600;
+  color: #0B1F41;
+  letter-spacing: -0.4px;
+  line-height: 1.15;
+}
+
+.ward-page-subtitle {
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  color: #64748B;
+  margin-top: 6px;
+}
+
+/* Controls Strip (Patient Count, Risk Breakdown & Sort Dropdown) */
+.ward-controls-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+}
+
+.ward-summary-counts {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  font-family: var(--font-sans);
+}
+
+.patient-total-badge {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0B1F41;
+  letter-spacing: -0.2px;
+}
+
+.summary-risk-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: #475569;
+}
+
+.summary-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot-high { background-color: #E53945; }
+.dot-medium { background-color: #E9A313; }
+.dot-low { background-color: #159A72; }
+
+/* Sort Controls */
+.ward-sort-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sort-label {
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  color: #64748B;
+  font-weight: 500;
+}
+
+.sort-select-container {
+  position: relative;
+}
+
+.sort-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: #FFFFFF;
+  border: 1px solid #D6E0E8;
+  border-radius: 8px;
+  padding: 8px 34px 8px 14px;
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #0B1F41;
+  cursor: pointer;
+  outline: none;
+  transition: var(--transition-smooth);
+}
+
+.sort-select:focus {
+  border-color: #216A86;
+  box-shadow: 0 0 0 3px rgba(33, 106, 134, 0.12);
+}
+
+.sort-chevron-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #64748B;
+  display: flex;
+  align-items: center;
+}
+
+/* Patient Scanning List Table Card */
+.ward-table-wrapper {
+  width: 100%;
+  border: 1px solid #E2EBF2;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #FFFFFF;
+  box-shadow: 0 1px 3px rgba(11, 31, 65, 0.02);
+}
+
+.ward-table-header {
+  display: grid;
+  grid-template-columns: 8px 90px 1.4fr 2.4fr 1.1fr 75px 115px 30px;
+  align-items: center;
+  padding: 12px 20px;
+  background-color: #F8FAFD;
+  border-bottom: 1px solid #E6EEF5;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #64748B;
+  letter-spacing: 0.2px;
+}
+
+.ward-table-body {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Patient Row */
+.patient-row {
+  display: grid;
+  grid-template-columns: 8px 90px 1.4fr 2.4fr 1.1fr 75px 115px 30px;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #EEF3F8;
+  background-color: #FFFFFF;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  text-decoration: none;
+  color: inherit;
+}
+
+.patient-row:last-child {
+  border-bottom: none;
+}
+
+.patient-row:hover {
+  background-color: #F5FAFD;
+}
+
+/* Row Columns */
+.col-tier {
+  display: flex;
+  align-items: center;
+}
+
+.tier-bar {
+  width: 4px;
+  height: 34px;
+  border-radius: 3px;
+  display: block;
+}
+
+.tier-bar-high { background-color: #E53945; }
+.tier-bar-medium { background-color: #E9A313; }
+.tier-bar-low { background-color: #159A72; }
+
+.col-bed {
+  font-family: var(--font-sans);
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #0B1F41;
+}
+
+.col-patient {
+  display: flex;
+  flex-direction: column;
+}
+
+.patient-name {
+  font-family: var(--font-sans);
+  font-size: 0.94rem;
+  font-weight: 600;
+  color: #0B1F41;
+  line-height: 1.25;
+}
+
+.patient-demographics {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  color: #64748B;
+  margin-top: 2px;
+}
+
+.col-why {
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  color: #475569;
+  padding-right: 14px;
+}
+
+.col-updated {
+  font-family: var(--font-sans);
+  font-size: 0.84rem;
+  color: #64748B;
+}
+
+.col-news2 {
+  display: flex;
+  align-items: center;
+}
+
+.score-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 28px;
+  border-radius: 6px;
+  font-family: var(--font-sans);
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.score-badge-high {
+  background-color: #FDE8E8;
+  color: #E53945;
+}
+
+.score-badge-medium {
+  background-color: #FEF3C7;
+  color: #D97706;
+}
+
+.score-badge-low {
+  background-color: #DCFCE7;
+  color: #159A72;
+}
+
+.col-trend {
+  display: flex;
+  align-items: center;
+}
+
+.trend-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+}
+
+.trend-indicator.trend-rising {
+  color: #E53945;
+  font-weight: 600;
+}
+
+.trend-indicator.trend-stable {
+  color: #64748B;
+  font-weight: 500;
+}
+
+.trend-indicator.trend-falling {
+  color: #159A72;
+  font-weight: 600;
+}
+
+.col-action {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  color: #94A3B8;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.patient-row:hover .col-action {
+  color: #216A86;
+  transform: translateX(2px);
+}
+
+.ward-empty-state {
+  padding: 48px 24px;
+  text-align: center;
+  color: #64748B;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+}
+
+/* Generic slot center container */
 .slot-placeholder-center {
   text-align: center;
   max-width: 580px;
-  margin: 0 auto;
+  margin: 40px auto;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-/* Illustration Container */
-.illustration-container {
-  position: relative;
-  width: 180px;
-  height: 130px;
-  margin-bottom: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.illustration-blob {
-  position: absolute;
-  width: 170px;
-  height: 120px;
-  background: #E8F3F8;
-  border-radius: 58% 42% 60% 40% / 48% 52% 48% 52%;
-  z-index: 1;
-}
-
-.illustration-card {
-  position: relative;
-  z-index: 2;
-}
-
-.illustration-svg {
-  width: 150px;
-  height: 105px;
-  display: block;
-}
-
-/* Placeholder Headings & Copy */
 .slot-heading {
   font-family: var(--font-serif);
-  font-size: 2.55rem;
+  font-size: 2.45rem;
   font-weight: 600;
   color: #0B1F41;
   letter-spacing: -0.5px;
