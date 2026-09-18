@@ -1,6 +1,6 @@
-﻿from __future__ import annotations
-from typing import Dict, List, Optional
-from pydantic import BaseModel, Field
+from __future__ import annotations
+from typing import Any, Dict, List, Optional
+from pydantic import BaseModel, Field, model_validator
 
 
 class VitalReading(BaseModel):
@@ -15,7 +15,22 @@ class VitalReading(BaseModel):
 
 
 class PatientInferenceRequest(BaseModel):
-    patient_id: str = Field(..., description="Unique patient identifier (e.g. P001).")
+    patient_id: Optional[str] = Field(None, description="Patient ID (accepts patient_id or p_patient_id)")
+    minutes: int = Field(30, description="Window of recent vitals in minutes (default 30)")
+    p_patient_id: Optional[str] = Field(None, description="Alias for patient_id")
+    p_minutes: Optional[int] = Field(None, description="Alias for minutes")
+
+    @model_validator(mode="before")
+    @classmethod
+    def resolve_aliases(cls, values: Any) -> Any:
+        if isinstance(values, dict):
+            pid = values.get("patient_id") or values.get("p_patient_id")
+            mins = values.get("minutes") if values.get("minutes") is not None else values.get("p_minutes", 30)
+            if not pid:
+                raise ValueError("Either 'patient_id' or 'p_patient_id' is required.")
+            values["patient_id"] = str(pid)
+            values["minutes"] = int(mins) if mins is not None else 30
+        return values
 
 
 class InferenceRequest(BaseModel):

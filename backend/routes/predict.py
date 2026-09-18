@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 from fastapi import APIRouter, Depends, HTTPException
 import sys, os
 
@@ -39,7 +39,7 @@ async def run_prediction(
 ) -> InferenceResponse:
     # -- Step 1: fetch vitals from Supabase -----------------------------------
     try:
-        readings = await fetch_recent_vitals(body.patient_id)
+        readings = await fetch_recent_vitals(body.patient_id, minutes=body.minutes)
     except RuntimeError as exc:
         raise HTTPException(status_code=500, detail=str(exc))
     except httpx.HTTPStatusError as exc:
@@ -53,13 +53,13 @@ async def run_prediction(
     if not readings:
         raise HTTPException(
             status_code=404,
-            detail=f"No vitals found for patient '{body.patient_id}' in the last 30 minutes.",
+            detail=f"No vitals found for patient '{body.patient_id}' in the last {body.minutes} minutes.",
         )
 
     # -- Step 2: run model inference & SHAP explanation ----------------------
     payload = {
         "patient_id": body.patient_id,
-        "window_minutes": 30,
+        "window_minutes": body.minutes,
         "readings": readings,
     }
     try:

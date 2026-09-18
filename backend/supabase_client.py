@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 import os
 from typing import Any, Dict, List
 import httpx
@@ -20,12 +20,13 @@ def _headers() -> Dict[str, str]:
     }
 
 
-async def fetch_recent_vitals(patient_id: str) -> List[Dict[str, Any]]:
+async def fetch_recent_vitals(patient_id: str, minutes: int = 30) -> List[Dict[str, Any]]:
     """
-    Calls the Supabase RPC get_patient_recent_vitals with the given patient_id.
-    Returns the list of reading dicts as returned by the database.
+    Calls the Supabase RPC get_patient_recent_vitals with parameters:
+        p_patient_id: text
+        p_minutes: integer (default 30)
 
-    The RPC is expected to return rows with at least:
+    Returns the list of reading dicts as returned by the database:
         minute, ts, pulse_rate, spo2, systolic_bp, resp_rate, temperature, warning_label
 
     Raises:
@@ -42,15 +43,20 @@ async def fetch_recent_vitals(patient_id: str) -> List[Dict[str, Any]]:
         response = await client.post(
             _RPC_ENDPOINT,
             headers=_headers(),
-            json={"patient_id": patient_id},
+            json={
+                "p_patient_id": str(patient_id),
+                "p_minutes": int(minutes),
+            },
         )
         response.raise_for_status()
 
     data = response.json()
-    if not isinstance(data, list):
+    if isinstance(data, dict) and "readings" in data:
+        return data["readings"]
+    elif isinstance(data, list):
+        return data
+    else:
         raise ValueError(
             f"Unexpected response shape from Supabase RPC. "
-            f"Expected list, got {type(data).__name__}: {data}"
+            f"Expected list or dict with 'readings', got {type(data).__name__}: {data}"
         )
-
-    return data
