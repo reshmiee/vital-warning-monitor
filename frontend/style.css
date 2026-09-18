@@ -1814,6 +1814,695 @@ p {
   color: #64748B;
 }
 
+/* ==========================================================================
+   PART A: PATIENT LOOKUP PAGE STYLES
+   ========================================================================== */
+.lookup-card-container {
+  background-color: #FFFFFF;
+  border: 1px solid #E2EBF2;
+  border-radius: 12px;
+  padding: 26px 30px;
+  margin-bottom: 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 1px 3px rgba(11, 31, 65, 0.02);
+}
+
+.lookup-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lookup-field-label {
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #0B1F41;
+}
+
+.lookup-select-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.lookup-ward-select {
+  width: 100%;
+  height: 44px;
+  background-color: #FFFFFF;
+  border: 1px solid #D6E0E8;
+  border-radius: 8px;
+  padding: 8px 36px 8px 14px;
+  font-family: var(--font-sans);
+  font-size: 0.92rem;
+  color: #0B1F41;
+  appearance: none;
+  cursor: pointer;
+  outline: none;
+  transition: var(--transition-smooth);
+}
+
+.lookup-ward-select:focus {
+  border-color: #216A86;
+  box-shadow: 0 0 0 3px rgba(33, 106, 134, 0.12);
+}
+
+.lookup-select-chevron {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #64748B;
+  display: flex;
+  align-items: center;
+}
+
+.lookup-input-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.lookup-input-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94A3B8;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+}
+
+.lookup-patient-input {
+  width: 100%;
+  height: 46px;
+  padding: 10px 42px 10px 42px;
+  border: 1px solid #D6E0E8;
+  border-radius: 8px;
+  background-color: #FFFFFF;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  color: #0B1F41;
+  outline: none;
+  transition: var(--transition-smooth);
+}
+
+.lookup-patient-input::placeholder {
+  color: #8494A7;
+}
+
+.lookup-patient-input:focus {
+  border-color: #216A86;
+  box-shadow: 0 0 0 3px rgba(33, 106, 134, 0.12);
+}
+
+.lookup-clear-btn {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  color: #94A3B8;
+  cursor: pointer;
+  line-height: 1;
+  padding: 4px;
+  transition: color 0.2s;
+}
+
+.lookup-clear-btn:hover {
+  color: #0B1F41;
+}
+
+.lookup-results-header {
+  font-family: var(--font-sans);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #0B1F41;
+  margin-bottom: 14px;
+}
+
+.lookup-table-wrapper {
+  margin-bottom: 24px;
+}
+
+.lookup-table-header,
+.lookup-patient-row {
+  display: grid;
+  grid-template-columns: 8px 110px 1.8fr 1.5fr 30px;
+  align-items: center;
+  padding: 14px 20px;
+}
+
+.col-lookup-tier {
+  display: flex;
+  align-items: center;
+}
+
+.col-lookup-bed {
+  font-family: var(--font-sans);
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #0B1F41;
+}
+
+.col-lookup-name {
+  display: flex;
+  flex-direction: column;
+}
+
+.col-lookup-ward {
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  color: #475569;
+}
+
+.col-lookup-action {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  color: #94A3B8;
+  transition: transform 0.2s, color 0.2s;
+}
+
+.lookup-patient-row:hover .col-lookup-action {
+  color: #216A86;
+  transform: translateX(2px);
+}
+
+.lookup-state-card {
+  background-color: #FFFFFF;
+  border: 1px solid #E2EBF2;
+  border-radius: 12px;
+  padding: 56px 32px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+  box-shadow: 0 1px 3px rgba(11, 31, 65, 0.02);
+}
+
+.lookup-state-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #E8F3F8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+
+.lookup-state-title {
+  font-family: var(--font-serif);
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #0B1F41;
+  letter-spacing: -0.3px;
+  margin-bottom: 6px;
+}
+
+.lookup-state-text {
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  color: #64748B;
+}
+
+/* ==========================================================================
+   PART B: PATIENT FULL REPORT PAGE STYLES
+   ========================================================================== */
+.report-top-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.report-back-btn {
+  background: none;
+  border: none;
+  color: #216A86;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0;
+  transition: var(--transition-smooth);
+}
+
+.report-back-btn:hover {
+  color: #144b5f;
+  text-decoration: underline;
+}
+
+.report-timestamp-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: #64748B;
+}
+
+.report-refresh-btn {
+  background: none;
+  border: none;
+  color: #64748B;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px;
+  border-radius: 4px;
+  transition: color 0.2s, transform 0.3s;
+}
+
+.report-refresh-btn:hover {
+  color: #216A86;
+  transform: rotate(90deg);
+}
+
+/* Expanded Hero Card */
+.report-hero-card {
+  background-color: #FFFFFF;
+  border: 1px solid #E2EBF2;
+  border-radius: 14px;
+  padding: 24px 28px;
+  display: grid;
+  grid-template-columns: 6px 1fr auto auto;
+  gap: 24px;
+  align-items: center;
+  margin-bottom: 28px;
+  box-shadow: 0 2px 8px rgba(11, 31, 65, 0.03);
+}
+
+.report-tier-bar {
+  width: 6px;
+  height: 100%;
+  min-height: 80px;
+  border-radius: 3px;
+}
+
+.report-hero-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.report-patient-name {
+  font-family: var(--font-serif);
+  font-size: 1.95rem;
+  font-weight: 600;
+  color: #0B1F41;
+  letter-spacing: -0.4px;
+  line-height: 1.15;
+  margin-bottom: 4px;
+}
+
+.report-patient-meta {
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  color: #64748B;
+  margin-bottom: 12px;
+}
+
+.report-why-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+}
+
+.report-why-label {
+  font-weight: 700;
+  color: #0B1F41;
+}
+
+.report-why-value {
+  color: #475569;
+}
+
+/* Score Panel */
+.report-score-panel {
+  padding: 16px 24px;
+  border-radius: 12px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 125px;
+}
+
+.score-panel-high {
+  background-color: #FFF5F5;
+  border: 1px solid #FED7D7;
+}
+
+.score-panel-medium {
+  background-color: #FFFBEB;
+  border: 1px solid #FDE68A;
+}
+
+.score-panel-low {
+  background-color: #F0FDF4;
+  border: 1px solid #BBF7D0;
+}
+
+.score-panel-title {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #64748B;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.score-panel-number {
+  font-family: var(--font-sans);
+  font-size: 2.35rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.score-panel-high .score-panel-number { color: #E53945; }
+.score-panel-medium .score-panel-number { color: #D97706; }
+.score-panel-low .score-panel-number { color: #159A72; }
+
+.score-panel-tier-label {
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.score-panel-high .score-panel-tier-label { color: #E53945; }
+.score-panel-medium .score-panel-tier-label { color: #D97706; }
+.score-panel-low .score-panel-tier-label { color: #159A72; }
+
+/* Trend Panel */
+.report-trend-panel {
+  padding: 16px 20px;
+  border-radius: 12px;
+  background-color: #FAFCFE;
+  border: 1px solid #E2EBF2;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 155px;
+}
+
+.report-trend-arrow-text {
+  font-family: var(--font-sans);
+  font-size: 1.45rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.report-trend-horizon {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  color: #64748B;
+  margin-top: 6px;
+  max-width: 140px;
+}
+
+/* Section Header */
+.report-section-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.report-section-title {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #0B1F41;
+  letter-spacing: -0.2px;
+}
+
+.report-section-subtitle {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: #64748B;
+  margin-left: 8px;
+  font-weight: 400;
+}
+
+/* Current Vitals Strip */
+.report-vitals-strip {
+  background-color: #FFFFFF;
+  border: 1px solid #E2EBF2;
+  border-radius: 12px;
+  padding: 18px 24px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-bottom: 30px;
+  box-shadow: 0 1px 3px rgba(11, 31, 65, 0.02);
+}
+
+.vital-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 12px;
+  border-right: 1px solid #EDF2F7;
+}
+
+.vital-tile:last-child {
+  border-right: none;
+}
+
+.vital-tile-label {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #64748B;
+  text-transform: uppercase;
+}
+
+.vital-tile-value-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+}
+
+.vital-tile-number {
+  font-family: var(--font-sans);
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: #0B1F41;
+  line-height: 1.1;
+}
+
+.vital-tile-unit {
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  color: #64748B;
+  font-weight: 400;
+}
+
+.vital-tile-status {
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.status-rising { color: #E53945; }
+.status-falling { color: #10B981; }
+.status-stable { color: #64748B; }
+
+/* Vitals Charts Section */
+.report-charts-header {
+  margin-top: 10px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.charts-legend {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  color: #475569;
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-line {
+  display: inline-block;
+  width: 18px;
+  height: 3px;
+  border-radius: 1px;
+}
+
+.line-actual { background-color: #1765D1; }
+.line-forecast { background: repeating-linear-gradient(to right, #1765D1, #1765D1 4px, transparent 4px, transparent 8px); }
+.line-threshold { background: repeating-linear-gradient(to right, #E53945, #E53945 4px, transparent 4px, transparent 8px); }
+
+.vitals-charts-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.vitals-charts-grid > :nth-child(4) {
+  grid-column: 1 / 2;
+}
+
+.vitals-charts-grid > :nth-child(5) {
+  grid-column: 2 / 3;
+}
+
+.vital-chart-card {
+  background-color: #FFFFFF;
+  border: 1px solid #E2EBF2;
+  border-radius: 12px;
+  padding: 18px 20px 14px;
+  box-shadow: 0 1px 3px rgba(11, 31, 65, 0.02);
+}
+
+.chart-title {
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #0B1F41;
+  margin-bottom: 12px;
+}
+
+.chart-canvas-wrap {
+  width: 100%;
+  height: 130px;
+}
+
+.mini-chart-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.chart-tick {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  fill: #94A3B8;
+  font-weight: 500;
+}
+
+.chart-x-label {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  fill: #64748B;
+  font-weight: 500;
+}
+
+.font-bold { font-weight: 700; fill: #0B1F41; }
+
+/* NEWS2 Score Full-Width Chart */
+.report-news2-card {
+  background-color: #FFFFFF;
+  border: 1px solid #E2EBF2;
+  border-radius: 12px;
+  padding: 22px 24px;
+  margin-bottom: 30px;
+  box-shadow: 0 1px 3px rgba(11, 31, 65, 0.02);
+}
+
+.news2-chart-title {
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #0B1F41;
+  margin-bottom: 14px;
+}
+
+.news2-svg-container {
+  width: 100%;
+  height: 190px;
+}
+
+.news2-full-chart {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.threshold-label {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.threshold-label.label-high { fill: #E53945; }
+.threshold-label.label-med { fill: #E9A313; }
+
+/* Alert History Table */
+.report-alerts-table {
+  margin-bottom: 16px;
+}
+
+.report-alerts-header,
+.report-alert-row {
+  display: grid;
+  grid-template-columns: 100px 190px 1fr;
+  align-items: center;
+  padding: 13px 20px;
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  border-bottom: 1px solid #EEF3F8;
+}
+
+.report-alerts-header {
+  background-color: #F8FAFD;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #64748B;
+  letter-spacing: 0.2px;
+}
+
+.report-alert-row:last-child {
+  border-bottom: none;
+}
+
+.col-alert-time {
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  color: #64748B;
+  font-weight: 500;
+}
+
+.col-alert-event {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: #0B1F41;
+}
+
+.col-alert-details {
+  color: #475569;
+}
+
 /* Generic slot center container */
 .slot-placeholder-center {
   text-align: center;
@@ -2024,6 +2713,29 @@ p {
   .dashboard-content-area {
     padding: 20px;
   }
+
+  .report-hero-card {
+    grid-template-columns: 6px 1fr;
+    gap: 18px;
+  }
+
+  .report-score-panel,
+  .report-trend-panel {
+    grid-column: 2;
+  }
+
+  .report-vitals-strip {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .vitals-charts-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .vitals-charts-grid > :nth-child(4),
+  .vitals-charts-grid > :nth-child(5) {
+    grid-column: auto;
+  }
 }
 
 @media (max-width: 680px) {
@@ -2053,8 +2765,50 @@ p {
   }
 
   .dashboard-main-panel {
-    padding: 32px 16px;
+    padding: 28px 16px;
     border-radius: 18px;
+  }
+
+  .report-hero-card {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 20px 16px;
+  }
+
+  .report-tier-bar {
+    width: 100%;
+    height: 4px;
+    min-height: 4px;
+  }
+
+  .report-vitals-strip {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 14px 12px;
+  }
+
+  .vital-tile {
+    border-right: none;
+    padding: 8px 6px;
+  }
+
+  .vitals-charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lookup-table-header,
+  .lookup-patient-row {
+    grid-template-columns: 6px 75px 1fr 24px;
+  }
+
+  .col-lookup-ward {
+    display: none;
+  }
+
+  .report-alerts-header,
+  .report-alert-row {
+    grid-template-columns: 65px 130px 1fr;
+    padding: 10px 12px;
   }
 }
 

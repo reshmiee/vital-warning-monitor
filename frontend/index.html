@@ -797,7 +797,483 @@
 
           </div>
 
-          <!-- Placeholder container for other tabs (Lookup, Alerts) -->
+          <!-- ============================================================
+               SLOT 3: PATIENT LOOKUP PAGE (PART A)
+               ============================================================ -->
+          <div id="patient-lookup-view" class="dashboard-subview" style="display: none;">
+            
+            <!-- Page Header -->
+            <div class="ward-page-header">
+              <h1 class="ward-page-title">Patient lookup</h1>
+              <p class="ward-page-subtitle">Search for a patient by name or bed number.</p>
+            </div>
+
+            <!-- Lookup Search Card -->
+            <div class="lookup-card-container">
+              
+              <!-- Ward Dropdown -->
+              <div class="lookup-field-group">
+                <label for="lookup-ward-select" class="lookup-field-label">Ward</label>
+                <div class="lookup-select-wrap">
+                  <select id="lookup-ward-select" class="lookup-ward-select" aria-label="Select Ward">
+                    <option value="4B">Ward 4B (General Medicine)</option>
+                    <option value="4A">Ward 4A (Cardiology)</option>
+                    <option value="ICU">ICU Step-down</option>
+                  </select>
+                  <span class="lookup-select-chevron" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </span>
+                </div>
+              </div>
+
+              <!-- Search Input -->
+              <div class="lookup-field-group">
+                <label for="lookup-patient-input" class="lookup-field-label">Search patient</label>
+                <div class="lookup-input-wrap">
+                  <span class="lookup-input-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                  </span>
+                  <input 
+                    type="text" 
+                    id="lookup-patient-input" 
+                    class="lookup-patient-input" 
+                    placeholder="Search by name or bed number..."
+                    aria-label="Search patient by name or bed number"
+                    autocomplete="off"
+                  >
+                  <button type="button" id="lookup-clear-btn" class="lookup-clear-btn" aria-label="Clear search text" style="display: none;">×</button>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Results Section (Visible when matches exist) -->
+            <div id="lookup-results-section" style="display: none;">
+              <h3 class="lookup-results-header" id="lookup-results-heading">Results</h3>
+              
+              <div class="ward-table-wrapper lookup-table-wrapper">
+                <div class="lookup-table-header" role="row">
+                  <div class="col-lookup-tier" aria-hidden="true"></div>
+                  <div class="col-lookup-bed">Bed</div>
+                  <div class="col-lookup-name">Patient name</div>
+                  <div class="col-lookup-ward">Ward</div>
+                  <div class="col-lookup-action" aria-hidden="true"></div>
+                </div>
+
+                <div class="ward-table-body" id="lookup-results-body" role="rowgroup">
+                  <!-- Injected dynamically -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Initial Empty State (Start typing) -->
+            <div id="lookup-initial-state" class="lookup-state-card">
+              <div class="lookup-state-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#216A86" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+              </div>
+              <h2 class="lookup-state-title">Start typing a name or bed number.</h2>
+              <p class="lookup-state-text">Search for a patient in the selected ward.</p>
+            </div>
+
+            <!-- No Matches State -->
+            <div id="lookup-no-results-state" class="lookup-state-card" style="display: none;">
+              <div class="lookup-state-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#216A86" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                  <line x1="10" y1="9" x2="8" y2="9"></line>
+                </svg>
+              </div>
+              <h2 class="lookup-state-title">No patients match "<span id="no-match-query-text"></span>"</h2>
+              <p class="lookup-state-text">Try a different name or bed number.</p>
+            </div>
+
+          </div>
+
+          <!-- ============================================================
+               SLOT 4: PATIENT FULL REPORT PAGE (PART B)
+               ============================================================ -->
+          <div id="patient-report-view" class="dashboard-subview" style="display: none;">
+            
+            <!-- Report Top Navigation Bar -->
+            <div class="report-top-nav">
+              <button type="button" class="report-back-btn" id="report-back-btn">
+                ← Back to search
+              </button>
+              <div class="report-timestamp-wrap">
+                <span class="report-updated-label" id="report-timestamp-text">Last updated: 2 min ago</span>
+                <button type="button" class="report-refresh-btn" id="report-refresh-btn" title="Refresh vitals">
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="23 4 23 10 17 10"></polyline>
+                    <polyline points="1 20 1 14 7 14"></polyline>
+                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Expanded Hero Patient Status Card -->
+            <div class="report-hero-card" id="report-hero-card">
+              <!-- Colored Left Tier Bar -->
+              <div class="report-tier-bar tier-bar-high" id="report-tier-indicator"></div>
+
+              <!-- Center Info Block -->
+              <div class="report-hero-info">
+                <h1 class="report-patient-name" id="report-patient-name">Wilson, Margaret</h1>
+                <p class="report-patient-meta" id="report-patient-meta">F, 72 &nbsp;|&nbsp; Bed 4B-07 &nbsp;|&nbsp; Ward 4B (General Medicine)</p>
+                <div class="report-why-row">
+                  <span class="report-why-label">Why flagged</span>
+                  <span class="report-why-value" id="report-why-text">RR rising, SpO₂ falling</span>
+                </div>
+              </div>
+
+              <!-- NEWS2 Score Hero Panel -->
+              <div class="report-score-panel score-panel-high" id="report-score-box">
+                <span class="score-panel-title">NEWS2 score</span>
+                <span class="score-panel-number" id="report-score-value">9</span>
+                <span class="score-panel-tier-label" id="report-score-label">High risk</span>
+              </div>
+
+              <!-- Trend Panel -->
+              <div class="report-trend-panel" id="report-trend-box">
+                <span class="report-trend-arrow-text trend-rising" id="report-trend-value">↗ Rising</span>
+                <span class="report-trend-horizon">Increasing risk over next 6 hours</span>
+              </div>
+            </div>
+
+            <!-- Current Vital Signs Strip -->
+            <div class="report-section-header">
+              <h2 class="report-section-title">Current vital signs</h2>
+              <span class="report-section-subtitle">(latest reading)</span>
+            </div>
+
+            <div class="report-vitals-strip">
+              <!-- Vital 1: RR -->
+              <div class="vital-tile">
+                <span class="vital-tile-label">RR</span>
+                <div class="vital-tile-value-wrap">
+                  <span class="vital-tile-number" id="vital-val-rr">24</span>
+                  <span class="vital-tile-unit">/min</span>
+                </div>
+                <span class="vital-tile-status status-rising" id="vital-status-rr">(rising)</span>
+              </div>
+
+              <!-- Vital 2: SpO2 -->
+              <div class="vital-tile">
+                <span class="vital-tile-label">SpO₂</span>
+                <div class="vital-tile-value-wrap">
+                  <span class="vital-tile-number" id="vital-val-spo2">91</span>
+                  <span class="vital-tile-unit">%</span>
+                </div>
+                <span class="vital-tile-status status-falling" id="vital-status-spo2">(falling)</span>
+              </div>
+
+              <!-- Vital 3: Systolic BP -->
+              <div class="vital-tile">
+                <span class="vital-tile-label">Systolic BP</span>
+                <div class="vital-tile-value-wrap">
+                  <span class="vital-tile-number" id="vital-val-bp">98</span>
+                  <span class="vital-tile-unit">mmHg</span>
+                </div>
+                <span class="vital-tile-status status-stable" id="vital-status-bp">(stable)</span>
+              </div>
+
+              <!-- Vital 4: Pulse -->
+              <div class="vital-tile">
+                <span class="vital-tile-label">Pulse</span>
+                <div class="vital-tile-value-wrap">
+                  <span class="vital-tile-number" id="vital-val-pulse">102</span>
+                  <span class="vital-tile-unit">/min</span>
+                </div>
+                <span class="vital-tile-status status-stable" id="vital-status-pulse">(stable)</span>
+              </div>
+
+              <!-- Vital 5: Temperature -->
+              <div class="vital-tile">
+                <span class="vital-tile-label">Temperature</span>
+                <div class="vital-tile-value-wrap">
+                  <span class="vital-tile-number" id="vital-val-temp">37.8</span>
+                  <span class="vital-tile-unit">°C</span>
+                </div>
+                <span class="vital-tile-status status-stable" id="vital-status-temp">(stable)</span>
+              </div>
+            </div>
+
+            <!-- Vitals Over Time (last 24 hours + forecast) -->
+            <div class="report-section-header report-charts-header">
+              <h2 class="report-section-title">Vitals over time (last 24 hours + forecast)</h2>
+              <div class="charts-legend">
+                <span class="legend-item"><span class="legend-line line-actual"></span> Actual</span>
+                <span class="legend-item"><span class="legend-line line-forecast"></span> Forecast</span>
+                <span class="legend-item"><span class="legend-line line-threshold"></span> NEWS2 threshold</span>
+              </div>
+            </div>
+
+            <!-- 5 Precision SVG Vitals Charts (3 Top Row, 2 Bottom Row) -->
+            <div class="vitals-charts-grid">
+              
+              <!-- Chart 1: RR -->
+              <div class="vital-chart-card">
+                <h3 class="chart-title">Respiratory rate (RR)</h3>
+                <div class="chart-canvas-wrap">
+                  <svg viewBox="0 0 300 130" class="mini-chart-svg" preserveAspectRatio="none">
+                    <!-- Threshold band (high RR threshold >= 21) -->
+                    <rect x="25" y="10" width="265" height="36" fill="#FEE2E2" opacity="0.45"/>
+                    <line x1="25" y1="46" x2="290" y2="46" stroke="#E53945" stroke-width="1.5" stroke-dasharray="4 3"/>
+                    <!-- Axes -->
+                    <line x1="25" y1="10" x2="25" y2="105" stroke="#CBD5E1" stroke-width="1"/>
+                    <line x1="25" y1="105" x2="290" y2="105" stroke="#CBD5E1" stroke-width="1"/>
+                    <!-- Ticks -->
+                    <text x="20" y="24" class="chart-tick" text-anchor="end">40</text>
+                    <text x="20" y="66" class="chart-tick" text-anchor="end">20</text>
+                    <text x="20" y="108" class="chart-tick" text-anchor="end">0</text>
+                    <!-- Actual line (-24h to Now) -->
+                    <path d="M25,82 L70,78 L120,70 L170,64 L220,54" fill="none" stroke="#1765D1" stroke-width="2.4" stroke-linecap="round"/>
+                    <!-- Forecast line (Now to +6h) -->
+                    <path d="M220,54 L255,44 L288,34" fill="none" stroke="#1765D1" stroke-width="2.4" stroke-dasharray="4 4" stroke-linecap="round"/>
+                    <circle cx="220" cy="54" r="3" fill="#1765D1"/>
+                    <!-- X labels -->
+                    <text x="25" y="122" class="chart-x-label">-24h</text>
+                    <text x="120" y="122" class="chart-x-label">-12h</text>
+                    <text x="220" y="122" class="chart-x-label font-bold">Now</text>
+                    <text x="288" y="122" class="chart-x-label" text-anchor="end">+6h</text>
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Chart 2: SpO2 -->
+              <div class="vital-chart-card">
+                <h3 class="chart-title">Oxygen saturation (SpO₂)</h3>
+                <div class="chart-canvas-wrap">
+                  <svg viewBox="0 0 300 130" class="mini-chart-svg" preserveAspectRatio="none">
+                    <!-- Threshold line (< 94) -->
+                    <rect x="25" y="62" width="265" height="43" fill="#FEE2E2" opacity="0.45"/>
+                    <line x1="25" y1="62" x2="290" y2="62" stroke="#E53945" stroke-width="1.5" stroke-dasharray="4 3"/>
+                    <!-- Axes -->
+                    <line x1="25" y1="10" x2="25" y2="105" stroke="#CBD5E1" stroke-width="1"/>
+                    <line x1="25" y1="105" x2="290" y2="105" stroke="#CBD5E1" stroke-width="1"/>
+                    <!-- Ticks -->
+                    <text x="20" y="24" class="chart-tick" text-anchor="end">100</text>
+                    <text x="20" y="66" class="chart-tick" text-anchor="end">90</text>
+                    <text x="20" y="108" class="chart-tick" text-anchor="end">80</text>
+                    <!-- Actual line -->
+                    <path d="M25,24 L70,28 L120,34 L170,44 L220,62" fill="none" stroke="#10B981" stroke-width="2.4" stroke-linecap="round"/>
+                    <!-- Forecast line -->
+                    <path d="M220,62 L255,76 L288,88" fill="none" stroke="#10B981" stroke-width="2.4" stroke-dasharray="4 4" stroke-linecap="round"/>
+                    <circle cx="220" cy="62" r="3" fill="#10B981"/>
+                    <!-- X labels -->
+                    <text x="25" y="122" class="chart-x-label">-24h</text>
+                    <text x="120" y="122" class="chart-x-label">-12h</text>
+                    <text x="220" y="122" class="chart-x-label font-bold">Now</text>
+                    <text x="288" y="122" class="chart-x-label" text-anchor="end">+6h</text>
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Chart 3: Systolic BP -->
+              <div class="vital-chart-card">
+                <h3 class="chart-title">Systolic blood pressure</h3>
+                <div class="chart-canvas-wrap">
+                  <svg viewBox="0 0 300 130" class="mini-chart-svg" preserveAspectRatio="none">
+                    <!-- Threshold line (SBP <= 100) -->
+                    <rect x="25" y="70" width="265" height="35" fill="#FEE2E2" opacity="0.45"/>
+                    <line x1="25" y1="70" x2="290" y2="70" stroke="#E53945" stroke-width="1.5" stroke-dasharray="4 3"/>
+                    <!-- Axes -->
+                    <line x1="25" y1="10" x2="25" y2="105" stroke="#CBD5E1" stroke-width="1"/>
+                    <line x1="25" y1="105" x2="290" y2="105" stroke="#CBD5E1" stroke-width="1"/>
+                    <!-- Ticks -->
+                    <text x="20" y="24" class="chart-tick" text-anchor="end">160</text>
+                    <text x="20" y="66" class="chart-tick" text-anchor="end">120</text>
+                    <text x="20" y="108" class="chart-tick" text-anchor="end">80</text>
+                    <!-- Actual line -->
+                    <path d="M25,56 L70,50 L120,54 L170,68 L220,74" fill="none" stroke="#8B5CF6" stroke-width="2.4" stroke-linecap="round"/>
+                    <!-- Forecast line -->
+                    <path d="M220,74 L255,73 L288,71" fill="none" stroke="#8B5CF6" stroke-width="2.4" stroke-dasharray="4 4" stroke-linecap="round"/>
+                    <circle cx="220" cy="74" r="3" fill="#8B5CF6"/>
+                    <!-- X labels -->
+                    <text x="25" y="122" class="chart-x-label">-24h</text>
+                    <text x="120" y="122" class="chart-x-label">-12h</text>
+                    <text x="220" y="122" class="chart-x-label font-bold">Now</text>
+                    <text x="288" y="122" class="chart-x-label" text-anchor="end">+6h</text>
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Chart 4: Pulse -->
+              <div class="vital-chart-card">
+                <h3 class="chart-title">Heart rate (pulse)</h3>
+                <div class="chart-canvas-wrap">
+                  <svg viewBox="0 0 300 130" class="mini-chart-svg" preserveAspectRatio="none">
+                    <!-- Threshold line (Pulse >= 91) -->
+                    <rect x="25" y="10" width="265" height="42" fill="#FEF3C7" opacity="0.45"/>
+                    <line x1="25" y1="52" x2="290" y2="52" stroke="#E9A313" stroke-width="1.5" stroke-dasharray="4 3"/>
+                    <!-- Axes -->
+                    <line x1="25" y1="10" x2="25" y2="105" stroke="#CBD5E1" stroke-width="1"/>
+                    <line x1="25" y1="105" x2="290" y2="105" stroke="#CBD5E1" stroke-width="1"/>
+                    <!-- Ticks -->
+                    <text x="20" y="24" class="chart-tick" text-anchor="end">150</text>
+                    <text x="20" y="66" class="chart-tick" text-anchor="end">100</text>
+                    <text x="20" y="108" class="chart-tick" text-anchor="end">50</text>
+                    <!-- Actual line -->
+                    <path d="M25,76 L70,72 L120,68 L170,60 L220,48" fill="none" stroke="#F59E0B" stroke-width="2.4" stroke-linecap="round"/>
+                    <!-- Forecast line -->
+                    <path d="M220,48 L255,42 L288,36" fill="none" stroke="#F59E0B" stroke-width="2.4" stroke-dasharray="4 4" stroke-linecap="round"/>
+                    <circle cx="220" cy="48" r="3" fill="#F59E0B"/>
+                    <!-- X labels -->
+                    <text x="25" y="122" class="chart-x-label">-24h</text>
+                    <text x="120" y="122" class="chart-x-label">-12h</text>
+                    <text x="220" y="122" class="chart-x-label font-bold">Now</text>
+                    <text x="288" y="122" class="chart-x-label" text-anchor="end">+6h</text>
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Chart 5: Temperature -->
+              <div class="vital-chart-card">
+                <h3 class="chart-title">Temperature</h3>
+                <div class="chart-canvas-wrap">
+                  <svg viewBox="0 0 300 130" class="mini-chart-svg" preserveAspectRatio="none">
+                    <!-- Threshold line (Temp >= 38.1) -->
+                    <rect x="25" y="10" width="265" height="34" fill="#FEE2E2" opacity="0.45"/>
+                    <line x1="25" y1="44" x2="290" y2="44" stroke="#E53945" stroke-width="1.5" stroke-dasharray="4 3"/>
+                    <!-- Axes -->
+                    <line x1="25" y1="10" x2="25" y2="105" stroke="#CBD5E1" stroke-width="1"/>
+                    <line x1="25" y1="105" x2="290" y2="105" stroke="#CBD5E1" stroke-width="1"/>
+                    <!-- Ticks -->
+                    <text x="20" y="24" class="chart-tick" text-anchor="end">40</text>
+                    <text x="20" y="66" class="chart-tick" text-anchor="end">38</text>
+                    <text x="20" y="108" class="chart-tick" text-anchor="end">36</text>
+                    <!-- Actual line -->
+                    <path d="M25,72 L70,68 L120,62 L170,56 L220,50" fill="none" stroke="#0D9488" stroke-width="2.4" stroke-linecap="round"/>
+                    <!-- Forecast line -->
+                    <path d="M220,50 L255,44 L288,38" fill="none" stroke="#0D9488" stroke-width="2.4" stroke-dasharray="4 4" stroke-linecap="round"/>
+                    <circle cx="220" cy="50" r="3" fill="#0D9488"/>
+                    <!-- X labels -->
+                    <text x="25" y="122" class="chart-x-label">-24h</text>
+                    <text x="120" y="122" class="chart-x-label">-12h</text>
+                    <text x="220" y="122" class="chart-x-label font-bold">Now</text>
+                    <text x="288" y="122" class="chart-x-label" text-anchor="end">+6h</text>
+                  </svg>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- NEWS2 Score Over Time (Full Width Card) -->
+            <div class="report-news2-card">
+              <h3 class="news2-chart-title">NEWS2 score over time</h3>
+              <div class="news2-svg-container">
+                <svg viewBox="0 0 900 200" class="news2-full-chart" preserveAspectRatio="none">
+                  <!-- Shaded High Risk Region (Score >= 7) -->
+                  <rect x="50" y="16" width="820" height="48" fill="#FEE2E2" opacity="0.45"/>
+                  <line x1="50" y1="64" x2="870" y2="64" stroke="#E53945" stroke-width="1.8" stroke-dasharray="5 4"/>
+                  <text x="860" y="56" class="threshold-label label-high" text-anchor="end">High risk threshold (7)</text>
+
+                  <!-- Shaded Medium Risk Region (Score 5 to 7) -->
+                  <rect x="50" y="64" width="820" height="34" fill="#FEF3C7" opacity="0.45"/>
+                  <line x1="50" y1="98" x2="870" y2="98" stroke="#E9A313" stroke-width="1.8" stroke-dasharray="5 4"/>
+                  <text x="860" y="90" class="threshold-label label-med" text-anchor="end">Medium risk threshold (5)</text>
+
+                  <!-- Axes -->
+                  <line x1="50" y1="16" x2="50" y2="165" stroke="#CBD5E1" stroke-width="1.2"/>
+                  <line x1="50" y1="165" x2="870" y2="165" stroke="#CBD5E1" stroke-width="1.2"/>
+
+                  <!-- Y-Ticks -->
+                  <text x="42" y="22" class="chart-tick" text-anchor="end">10</text>
+                  <text x="42" y="68" class="chart-tick" text-anchor="end">7</text>
+                  <text x="42" y="102" class="chart-tick" text-anchor="end">5</text>
+                  <text x="42" y="169" class="chart-tick" text-anchor="end">0</text>
+
+                  <!-- Actual Historical NEWS2 Curve -->
+                  <path d="M50,152 L170,146 L280,140 L380,122 L480,116 L580,102 L660,82 L720,60" fill="none" stroke="#0B1F41" stroke-width="3" stroke-linecap="round"/>
+
+                  <!-- Forecasted Continuation -->
+                  <path d="M720,60 L780,44 L850,30" fill="none" stroke="#1765D1" stroke-width="3" stroke-dasharray="6 5" stroke-linecap="round"/>
+                  <circle cx="720" cy="60" r="4.5" fill="#0B1F41"/>
+
+                  <!-- X-Axis Labels -->
+                  <text x="50" y="186" class="chart-x-label">-24h</text>
+                  <text x="350" y="186" class="chart-x-label">-12h</text>
+                  <text x="720" y="186" class="chart-x-label font-bold">Now</text>
+                  <text x="860" y="186" class="chart-x-label" text-anchor="end">+6h</text>
+                </svg>
+              </div>
+            </div>
+
+            <!-- Patient Alert History Section -->
+            <div class="report-section-header">
+              <h2 class="report-section-title">Alert history for this patient</h2>
+            </div>
+
+            <div class="ward-table-wrapper report-alerts-table">
+              <div class="report-alerts-header" role="row">
+                <div class="col-alert-time">Time</div>
+                <div class="col-alert-event">Event</div>
+                <div class="col-alert-details">Details</div>
+              </div>
+              <div class="ward-table-body" id="report-alerts-body" role="rowgroup">
+                <!-- Dynamically populated or default rows -->
+                <div class="report-alert-row" role="row">
+                  <div class="col-alert-time">14:02</div>
+                  <div class="col-alert-event">
+                    <span class="summary-dot dot-high" aria-hidden="true"></span>
+                    <span class="event-text">Flagged high</span>
+                  </div>
+                  <div class="col-alert-details">NEWS2 9 — RR rising, SpO₂ falling</div>
+                </div>
+
+                <div class="report-alert-row" role="row">
+                  <div class="col-alert-time">11:17</div>
+                  <div class="col-alert-event">
+                    <span class="summary-dot dot-medium" aria-hidden="true"></span>
+                    <span class="event-text">Flagged medium</span>
+                  </div>
+                  <div class="col-alert-details">NEWS2 6 — increasing respiratory rate</div>
+                </div>
+
+                <div class="report-alert-row" role="row">
+                  <div class="col-alert-time">09:34</div>
+                  <div class="col-alert-event">
+                    <span class="summary-dot" style="background-color: #64748B;" aria-hidden="true"></span>
+                    <span class="event-text">Observations updated</span>
+                  </div>
+                  <div class="col-alert-details">SpO₂ 92% → 91%, RR 20 → 24</div>
+                </div>
+
+                <div class="report-alert-row" role="row">
+                  <div class="col-alert-time">06:12</div>
+                  <div class="col-alert-event">
+                    <span class="summary-dot dot-medium" aria-hidden="true"></span>
+                    <span class="event-text">Flagged medium</span>
+                  </div>
+                  <div class="col-alert-details">NEWS2 5 — temperature rising</div>
+                </div>
+
+                <div class="report-alert-row" role="row">
+                  <div class="col-alert-time">01:48</div>
+                  <div class="col-alert-event">
+                    <span class="summary-dot dot-low" aria-hidden="true"></span>
+                    <span class="event-text">Resolved</span>
+                  </div>
+                  <div class="col-alert-details">NEWS2 3 — back in range</div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Placeholder container for upcoming Alerts History page -->
           <div id="generic-tab-placeholder" class="dashboard-subview" style="display: none;">
             <div class="slot-placeholder-center">
               <div class="illustration-container">
