@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CareSight — Patient Deterioration Forecasting & Trajectory Monitoring</title>
-  <meta name="description" content="CareSight forecasts patient vitals and scores trajectories against clinical NEWS2 rules to catch deterioration before it happens.">
+  <title>Aarogya — Patient Deterioration Forecasting & Trajectory Monitoring</title>
+  <meta name="description" content="Aarogya forecasts patient vitals and scores trajectories against clinical NEWS2 rules to catch deterioration before it happens.">
   
   <!-- Google Fonts: Newsreader (editorial serif) & Public Sans (clean sans-serif) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,7 +29,7 @@
           <svg class="brand-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <path d="M3 16H8L11 9L15 23L19 12L22 18L24 16H29" stroke="#1765D1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
-          <span class="brand-title">CareSight</span>
+          <span class="brand-title">Aarogya</span>
           <span class="brand-tagline">Earlier insight | Safer care</span>
         </div>
         
@@ -53,7 +53,7 @@
               Catch patient deterioration <span class="highlight-blue">before</span> it happens, not after
             </h1>
             <p class="hero-description">
-              CareSight forecasts the next set of patient vitals, scores them against clinical NEWS2 rules, and flags patients who are trending toward deterioration — giving clinical teams earlier time to act
+              Aarogya forecasts the next set of patient vitals, scores them against clinical NEWS2 rules, and flags patients who are trending toward deterioration — giving clinical teams earlier time to act
             </p>
             <div class="hero-cta-wrap">
               <button type="button" class="btn btn-primary btn-large hero-cta-btn" id="hero-login-btn">
@@ -62,66 +62,9 @@
             </div>
           </div>
 
-          <!-- Right Visual Column -->
-          <div class="hero-visual">
-            <div class="hero-image-wrapper">
-              <!-- Poetic clinical overlay quote from reference design -->
-              <div class="hero-quote-overlay">
-                <span class="quote-italic">Earlier<br>insight<br>Brighter<br>tomorrows</span>
-                <div class="quote-accent-bar" aria-hidden="true"></div>
-              </div>
-              
-              <!-- Realistic Clinician & Patient Monitor Image -->
-              <img 
-                src="assets/images/hero-clinician.jpg" 
-                alt="Clinician monitoring bedside vitals display in a calm, modern hospital care setting"
-                class="hero-img"
-                id="hero-clinician-image"
-                onerror="this.style.display='none'; document.getElementById('hero-fallback-visual').style.display='flex';"
-              >
-
-              <!-- High-fidelity CSS/SVG Fallback if image is pending user replacement -->
-              <div id="hero-fallback-visual" class="hero-fallback-visual" style="display: none;">
-                <div class="fallback-monitor">
-                  <div class="monitor-header">
-                    <span class="monitor-dot"></span> BED 04 — CONTINUOUS TELEMETRY
-                  </div>
-                  <div class="monitor-row">
-                    <div class="vital-spark">
-                      <svg viewBox="0 0 160 40" class="spark-line">
-                        <path d="M0,20 L30,20 L35,5 L42,35 L48,15 L52,22 L56,20 L160,20" fill="none" stroke="#10B981" stroke-width="2"/>
-                      </svg>
-                      <span class="vital-label">HR / ECG</span>
-                    </div>
-                    <span class="vital-val val-green">76 <small>bpm</small></span>
-                  </div>
-                  <div class="monitor-row">
-                    <div class="vital-spark">
-                      <svg viewBox="0 0 160 40" class="spark-line">
-                        <path d="M0,20 Q40,5 80,20 T160,20" fill="none" stroke="#0EA5E9" stroke-width="2"/>
-                      </svg>
-                      <span class="vital-label">SpO₂ Pleth</span>
-                    </div>
-                    <span class="vital-val val-blue">98 <small>%</small></span>
-                  </div>
-                  <div class="monitor-row">
-                    <span class="vital-label">NIBP Systolic/Dia</span>
-                    <span class="vital-val val-amber">118/76</span>
-                  </div>
-                  <div class="monitor-row">
-                    <span class="vital-label">Resp Rate</span>
-                    <span class="vital-val val-cyan">16 <small>/min</small></span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Soft edge gradient mask for seamless blending -->
-              <div class="hero-blend-gradient" aria-hidden="true"></div>
-            </div>
-          </div>
+          
         </div>
       </section>
-
       <!-- How It Works Section -->
       <section class="how-it-works-section">
         <div class="section-container">
@@ -254,7 +197,7 @@
                 A single snapshot shows severity, not direction.
               </h2>
               <p class="why-description">
-                Two patients can have the same current NEWS2 score while one is improving and the other is getting worse. By looking at the trajectory — not just the snapshot — CareSight helps clinical teams spot deterioration earlier, so they can act sooner
+                Two patients can have the same current NEWS2 score while one is improving and the other is getting worse. By looking at the trajectory — not just the snapshot — Aarogya helps clinical teams spot deterioration earlier, so they can act sooner
               </p>
               <div class="why-highlight-statement">
                 <span class="statement-text">Same score. Different stories.</span>
@@ -351,7 +294,7 @@
           <svg class="footer-brand-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <path d="M3 16H8L11 9L15 23L19 12L22 18L24 16H29" stroke="#1765D1" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
-          <span class="footer-brand-title">CareSight</span>
+          <span class="footer-brand-title">Aarogya</span>
           <span class="footer-brand-tagline">Earlier insight|Safer care</span>
         </div>
 
@@ -1286,7 +1229,7 @@
               </div>
               <div class="alerts-header-right">
                 <p class="alerts-header-context">
-                  This log shows when CareSight flagged patients, any escalations,<br>
+                  This log shows when Aarogya flagged patients, any escalations,<br>
                   and when they later resolved.
                 </p>
               </div>

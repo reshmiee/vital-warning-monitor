@@ -1,5 +1,5 @@
 /**
- * Sentinel / CareSight — Patient Deterioration Forecasting System
+ * Sentinel / Aarogya — Patient Deterioration Forecasting System
  * Client-Side Router, Mock Authentication, Ward Overview, High Surveillance,
  * Patient Lookup & Patient Full Report Engine
  */
