@@ -1174,6 +1174,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Transition view inside dashboard shell
     navigateTo('dashboard', `patient/${patient.bedNumber}`);
+
+    // Render interactive Chart.js graphs for this patient
+    setTimeout(() => {
+      renderPatientCharts(patient);
+    }, 60);
   }
 
   // Report Back Button Click
@@ -1183,15 +1188,473 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Report Refresh Button Animation
+  // Report Refresh Button Animation & Chart Re-render
   if (reportRefreshBtn) {
     reportRefreshBtn.addEventListener('click', () => {
       if (reportTimestampText) {
         reportTimestampText.textContent = 'Updating...';
         setTimeout(() => {
           reportTimestampText.textContent = 'Last updated: Just now';
+          if (currentReportPatient) {
+            renderPatientCharts(currentReportPatient);
+          }
         }, 500);
       }
+    });
+  }
+
+  /* ==========================================================================
+     PART B-2: CHART.JS CLINICAL ENGINE & PATIENT CHARTS
+     ========================================================================== */
+  let patientChartInstances = {};
+
+  function destroyPatientCharts() {
+    Object.keys(patientChartInstances).forEach(id => {
+      try {
+        if (patientChartInstances[id]) {
+          patientChartInstances[id].destroy();
+        }
+      } catch (err) {
+        console.warn('Error destroying chart:', err);
+      }
+      delete patientChartInstances[id];
+    });
+  }
+
+  /**
+   * Generates realistic 24h past + 6h forecast data points for each patient
+   */
+  function generatePatientVitalSeries(patient) {
+    const labels = ['-24h', '-18h', '-12h', '-6h', 'Now', '+2h', '+4h', '+6h'];
+    const vitals = patient.vitals || {
+      respiratoryRate: 20, rrStatus: 'stable',
+      oxygenSaturation: 96, spo2Status: 'stable',
+      systolicBP: 120, bpStatus: 'stable',
+      pulse: 78, pulseStatus: 'stable',
+      temperature: 37.0, tempStatus: 'stable'
+    };
+
+    // Helper to generate realistic curve given now value, status, and delta step
+    function buildCurve(nowVal, status, step, minVal, maxVal, decimals = 0) {
+      let past;
+      let forecast;
+
+      if (status === 'rising') {
+        past = [
+          nowVal - step * 3.5,
+          nowVal - step * 2.8,
+          nowVal - step * 1.9,
+          nowVal - step * 0.9,
+          nowVal
+        ];
+        forecast = [
+          nowVal,
+          nowVal + step * 0.9,
+          nowVal + step * 1.8,
+          nowVal + step * 2.5
+        ];
+      } else if (status === 'falling') {
+        past = [
+          nowVal + step * 3.5,
+          nowVal + step * 2.8,
+          nowVal + step * 1.9,
+          nowVal + step * 0.9,
+          nowVal
+        ];
+        forecast = [
+          nowVal,
+          nowVal - step * 0.9,
+          nowVal - step * 1.8,
+          nowVal - step * 2.5
+        ];
+      } else {
+        // Stable
+        past = [
+          nowVal - step * 0.3,
+          nowVal + step * 0.2,
+          nowVal - step * 0.2,
+          nowVal + step * 0.1,
+          nowVal
+        ];
+        forecast = [
+          nowVal,
+          nowVal + step * 0.1,
+          nowVal,
+          nowVal - step * 0.1
+        ];
+      }
+
+      const clamp = (v) => {
+        const c = Math.max(minVal, Math.min(maxVal, v));
+        return decimals > 0 ? parseFloat(c.toFixed(decimals)) : Math.round(c);
+      };
+
+      const actual = [...past.map(clamp), null, null, null];
+      const fc = [null, null, null, null, clamp(nowVal), ...forecast.slice(1).map(clamp)];
+      return { actual, forecast: fc };
+    }
+
+    // RR (normal 12-20, threshold >= 21)
+    const rrSeries = buildCurve(vitals.respiratoryRate, vitals.rrStatus, 2.2, 8, 45, 0);
+
+    // SpO2 (normal >= 96, threshold < 94)
+    const spo2Series = buildCurve(vitals.oxygenSaturation, vitals.spo2Status, 1.3, 75, 100, 0);
+
+    // SBP (normal 111-219, threshold <= 100)
+    const sbpSeries = buildCurve(vitals.systolicBP, vitals.bpStatus, 4.5, 60, 200, 0);
+
+    // Pulse (normal 51-90, threshold >= 91)
+    const pulseSeries = buildCurve(vitals.pulse, vitals.pulseStatus, 4.0, 40, 160, 0);
+
+    // Temperature (normal 36.1-38.0, threshold >= 38.1)
+    const tempSeries = buildCurve(vitals.temperature, vitals.tempStatus, 0.25, 34.5, 41.5, 1);
+
+    // NEWS2 Score
+    const currentScore = typeof patient.currentScore === 'number' ? patient.currentScore : 3;
+    const news2Series = buildCurve(currentScore, patient.trend, 1.6, 0, 16, 0);
+
+    return {
+      labels,
+      rr: { ...rrSeries, threshold: 21, unit: 'breaths/min', min: 10, max: Math.max(35, vitals.respiratoryRate + 6) },
+      spo2: { ...spo2Series, threshold: 94, unit: '%', min: Math.min(80, vitals.oxygenSaturation - 5), max: 100 },
+      sbp: { ...sbpSeries, threshold: 100, unit: 'mmHg', min: Math.min(75, vitals.systolicBP - 15), max: Math.max(160, vitals.systolicBP + 20) },
+      pulse: { ...pulseSeries, threshold: 91, unit: 'bpm', min: Math.min(45, vitals.pulse - 15), max: Math.max(140, vitals.pulse + 20) },
+      temp: { ...tempSeries, threshold: 38.1, unit: '°C', min: 35.5, max: Math.max(40.0, vitals.temperature + 0.8) },
+      news2: { ...news2Series, medThreshold: 5, highThreshold: 7, unit: 'score', min: 0, max: Math.max(12, currentScore + 3) }
+    };
+  }
+
+  function createMiniVitalChart(canvasId, config) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const labels = config.labels;
+    const thresholdData = Array(labels.length).fill(config.threshold);
+
+    const chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Actual',
+            data: config.actual,
+            borderColor: config.color,
+            backgroundColor: config.color,
+            borderWidth: 2.2,
+            tension: 0.35,
+            pointRadius: (ctx) => (ctx.dataIndex === 4 ? 4.5 : 2.5),
+            pointHoverRadius: 5.5,
+            pointBackgroundColor: (ctx) => (ctx.dataIndex === 4 ? '#0B1F41' : config.color),
+            pointBorderColor: '#FFFFFF',
+            pointBorderWidth: 1.5,
+            fill: false,
+            spanGaps: false
+          },
+          {
+            label: 'Forecast',
+            data: config.forecast,
+            borderColor: config.color,
+            backgroundColor: '#FFFFFF',
+            borderWidth: 2,
+            borderDash: [5, 4],
+            tension: 0.35,
+            pointRadius: (ctx) => (ctx.dataIndex === 4 ? 0 : 3),
+            pointHoverRadius: 5,
+            pointBackgroundColor: '#FFFFFF',
+            pointBorderColor: config.color,
+            pointBorderWidth: 2,
+            fill: false,
+            spanGaps: false
+          },
+          {
+            label: `NEWS2 threshold (${config.threshold})`,
+            data: thresholdData,
+            borderColor: config.thresholdColor || '#E53945',
+            borderWidth: 1.2,
+            borderDash: [4, 3],
+            pointRadius: 0,
+            pointHoverRadius: 0,
+            fill: false
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: {
+          padding: { top: 6, bottom: 2, left: 4, right: 8 }
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            mode: 'index',
+            intersect: false,
+            backgroundColor: '#0B1F41',
+            titleFont: { family: "'Public Sans', sans-serif", size: 11, weight: '600' },
+            bodyFont: { family: "'Public Sans', sans-serif", size: 11 },
+            padding: 8,
+            cornerRadius: 6,
+            filter: (item) => item.raw !== null && item.raw !== undefined,
+            callbacks: {
+              label: (context) => {
+                const dsName = context.dataset.label;
+                return ` ${dsName}: ${context.raw} ${config.unit || ''}`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: {
+              color: 'rgba(226, 235, 242, 0.7)',
+              drawBorder: false
+            },
+            ticks: {
+              color: (tick) => (tick.index === 4 ? '#0B1F41' : '#64748B'),
+              font: (tick) => ({
+                family: "'Public Sans', sans-serif",
+                size: 10,
+                weight: tick.index === 4 ? '700' : '400'
+              }),
+              padding: 4
+            }
+          },
+          y: {
+            min: config.min,
+            max: config.max,
+            grid: {
+              color: 'rgba(226, 235, 242, 0.7)',
+              drawBorder: false
+            },
+            ticks: {
+              color: '#94A3B8',
+              font: { family: "'Public Sans', sans-serif", size: 10 },
+              maxTicksLimit: 4,
+              padding: 4
+            }
+          }
+        }
+      }
+    });
+
+    patientChartInstances[canvasId] = chart;
+  }
+
+  function createNews2FullChart(canvasId, config) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const labels = config.labels;
+
+    const chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Actual score',
+            data: config.actual,
+            borderColor: '#0B1F41',
+            backgroundColor: '#0B1F41',
+            borderWidth: 2.8,
+            tension: 0.35,
+            pointRadius: (ctx) => (ctx.dataIndex === 4 ? 6 : 3.5),
+            pointHoverRadius: 7,
+            pointBackgroundColor: (ctx) => (ctx.dataIndex === 4 ? '#E53945' : '#0B1F41'),
+            pointBorderColor: '#FFFFFF',
+            pointBorderWidth: 2,
+            fill: false,
+            spanGaps: false
+          },
+          {
+            label: 'Forecast score',
+            data: config.forecast,
+            borderColor: '#1765D1',
+            backgroundColor: '#FFFFFF',
+            borderWidth: 2.5,
+            borderDash: [6, 4],
+            tension: 0.35,
+            pointRadius: (ctx) => (ctx.dataIndex === 4 ? 0 : 4),
+            pointHoverRadius: 6,
+            pointBackgroundColor: '#FFFFFF',
+            pointBorderColor: '#1765D1',
+            pointBorderWidth: 2,
+            fill: false,
+            spanGaps: false
+          },
+          {
+            label: 'High risk threshold (7)',
+            data: Array(labels.length).fill(config.highThreshold),
+            borderColor: '#E53945',
+            borderWidth: 1.5,
+            borderDash: [5, 4],
+            pointRadius: 0,
+            pointHoverRadius: 0,
+            fill: false
+          },
+          {
+            label: 'Medium risk threshold (5)',
+            data: Array(labels.length).fill(config.medThreshold),
+            borderColor: '#E9A313',
+            borderWidth: 1.5,
+            borderDash: [5, 4],
+            pointRadius: 0,
+            pointHoverRadius: 0,
+            fill: false
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: {
+          padding: { top: 8, bottom: 4, left: 6, right: 12 }
+        },
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            mode: 'index',
+            intersect: false,
+            backgroundColor: '#0B1F41',
+            titleFont: { family: "'Public Sans', sans-serif", size: 12, weight: '600' },
+            bodyFont: { family: "'Public Sans', sans-serif", size: 11 },
+            padding: 10,
+            cornerRadius: 6,
+            filter: (item) => item.raw !== null && item.raw !== undefined,
+            callbacks: {
+              label: (context) => {
+                const dsName = context.dataset.label;
+                return ` ${dsName}: ${context.raw}`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: {
+              color: 'rgba(226, 235, 242, 0.7)',
+              drawBorder: false
+            },
+            ticks: {
+              color: (tick) => (tick.index === 4 ? '#0B1F41' : '#64748B'),
+              font: (tick) => ({
+                family: "'Public Sans', sans-serif",
+                size: 11,
+                weight: tick.index === 4 ? '700' : '500'
+              }),
+              padding: 6
+            }
+          },
+          y: {
+            min: 0,
+            max: config.max,
+            grid: {
+              color: 'rgba(226, 235, 242, 0.7)',
+              drawBorder: false
+            },
+            ticks: {
+              color: '#94A3B8',
+              font: { family: "'Public Sans', sans-serif", size: 11 },
+              stepSize: 2,
+              padding: 6
+            }
+          }
+        }
+      }
+    });
+
+    patientChartInstances[canvasId] = chart;
+  }
+
+  function renderPatientCharts(patient) {
+    if (typeof Chart === 'undefined') {
+      console.warn('Chart.js library is not yet loaded, retrying...');
+      setTimeout(() => renderPatientCharts(patient), 200);
+      return;
+    }
+
+    destroyPatientCharts();
+
+    const data = generatePatientVitalSeries(patient);
+
+    // 1. Respiratory Rate
+    createMiniVitalChart('chart-rr', {
+      labels: data.labels,
+      actual: data.rr.actual,
+      forecast: data.rr.forecast,
+      threshold: data.rr.threshold,
+      color: '#1765D1',
+      unit: data.rr.unit,
+      min: data.rr.min,
+      max: data.rr.max
+    });
+
+    // 2. SpO2
+    createMiniVitalChart('chart-spo2', {
+      labels: data.labels,
+      actual: data.spo2.actual,
+      forecast: data.spo2.forecast,
+      threshold: data.spo2.threshold,
+      color: '#10B981',
+      unit: data.spo2.unit,
+      min: data.spo2.min,
+      max: data.spo2.max
+    });
+
+    // 3. Systolic BP
+    createMiniVitalChart('chart-sbp', {
+      labels: data.labels,
+      actual: data.sbp.actual,
+      forecast: data.sbp.forecast,
+      threshold: data.sbp.threshold,
+      color: '#8B5CF6',
+      unit: data.sbp.unit,
+      min: data.sbp.min,
+      max: data.sbp.max
+    });
+
+    // 4. Pulse
+    createMiniVitalChart('chart-pulse', {
+      labels: data.labels,
+      actual: data.pulse.actual,
+      forecast: data.pulse.forecast,
+      threshold: data.pulse.threshold,
+      thresholdColor: '#E9A313',
+      color: '#F59E0B',
+      unit: data.pulse.unit,
+      min: data.pulse.min,
+      max: data.pulse.max
+    });
+
+    // 5. Temperature
+    createMiniVitalChart('chart-temp', {
+      labels: data.labels,
+      actual: data.temp.actual,
+      forecast: data.temp.forecast,
+      threshold: data.temp.threshold,
+      color: '#0D9488',
+      unit: data.temp.unit,
+      min: data.temp.min,
+      max: data.temp.max
+    });
+
+    // 6. NEWS2 Full-Width
+    createNews2FullChart('chart-news2', {
+      labels: data.labels,
+      actual: data.news2.actual,
+      forecast: data.news2.forecast,
+      highThreshold: data.news2.highThreshold,
+      medThreshold: data.news2.medThreshold,
+      max: data.news2.max
     });
   }
 

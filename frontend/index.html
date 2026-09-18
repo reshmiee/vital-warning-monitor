@@ -961,35 +961,14 @@
               </div>
             </div>
 
-            <!-- 5 Precision SVG Vitals Charts (3 Top Row, 2 Bottom Row) -->
+            <!-- 5 Interactive Chart.js Vitals Charts (3 Top Row, 2 Bottom Row) -->
             <div class="vitals-charts-grid">
               
               <!-- Chart 1: RR -->
               <div class="vital-chart-card">
                 <h3 class="chart-title">Respiratory rate (RR)</h3>
                 <div class="chart-canvas-wrap">
-                  <svg viewBox="0 0 300 130" class="mini-chart-svg" preserveAspectRatio="none">
-                    <!-- Threshold band (high RR threshold >= 21) -->
-                    <rect x="25" y="10" width="265" height="36" fill="#FEE2E2" opacity="0.45"/>
-                    <line x1="25" y1="46" x2="290" y2="46" stroke="#E53945" stroke-width="1.5" stroke-dasharray="4 3"/>
-                    <!-- Axes -->
-                    <line x1="25" y1="10" x2="25" y2="105" stroke="#CBD5E1" stroke-width="1"/>
-                    <line x1="25" y1="105" x2="290" y2="105" stroke="#CBD5E1" stroke-width="1"/>
-                    <!-- Ticks -->
-                    <text x="20" y="24" class="chart-tick" text-anchor="end">40</text>
-                    <text x="20" y="66" class="chart-tick" text-anchor="end">20</text>
-                    <text x="20" y="108" class="chart-tick" text-anchor="end">0</text>
-                    <!-- Actual line (-24h to Now) -->
-                    <path d="M25,82 L70,78 L120,70 L170,64 L220,54" fill="none" stroke="#1765D1" stroke-width="2.4" stroke-linecap="round"/>
-                    <!-- Forecast line (Now to +6h) -->
-                    <path d="M220,54 L255,44 L288,34" fill="none" stroke="#1765D1" stroke-width="2.4" stroke-dasharray="4 4" stroke-linecap="round"/>
-                    <circle cx="220" cy="54" r="3" fill="#1765D1"/>
-                    <!-- X labels -->
-                    <text x="25" y="122" class="chart-x-label">-24h</text>
-                    <text x="120" y="122" class="chart-x-label">-12h</text>
-                    <text x="220" y="122" class="chart-x-label font-bold">Now</text>
-                    <text x="288" y="122" class="chart-x-label" text-anchor="end">+6h</text>
-                  </svg>
+                  <canvas id="chart-rr"></canvas>
                 </div>
               </div>
 
@@ -997,28 +976,7 @@
               <div class="vital-chart-card">
                 <h3 class="chart-title">Oxygen saturation (SpO₂)</h3>
                 <div class="chart-canvas-wrap">
-                  <svg viewBox="0 0 300 130" class="mini-chart-svg" preserveAspectRatio="none">
-                    <!-- Threshold line (< 94) -->
-                    <rect x="25" y="62" width="265" height="43" fill="#FEE2E2" opacity="0.45"/>
-                    <line x1="25" y1="62" x2="290" y2="62" stroke="#E53945" stroke-width="1.5" stroke-dasharray="4 3"/>
-                    <!-- Axes -->
-                    <line x1="25" y1="10" x2="25" y2="105" stroke="#CBD5E1" stroke-width="1"/>
-                    <line x1="25" y1="105" x2="290" y2="105" stroke="#CBD5E1" stroke-width="1"/>
-                    <!-- Ticks -->
-                    <text x="20" y="24" class="chart-tick" text-anchor="end">100</text>
-                    <text x="20" y="66" class="chart-tick" text-anchor="end">90</text>
-                    <text x="20" y="108" class="chart-tick" text-anchor="end">80</text>
-                    <!-- Actual line -->
-                    <path d="M25,24 L70,28 L120,34 L170,44 L220,62" fill="none" stroke="#10B981" stroke-width="2.4" stroke-linecap="round"/>
-                    <!-- Forecast line -->
-                    <path d="M220,62 L255,76 L288,88" fill="none" stroke="#10B981" stroke-width="2.4" stroke-dasharray="4 4" stroke-linecap="round"/>
-                    <circle cx="220" cy="62" r="3" fill="#10B981"/>
-                    <!-- X labels -->
-                    <text x="25" y="122" class="chart-x-label">-24h</text>
-                    <text x="120" y="122" class="chart-x-label">-12h</text>
-                    <text x="220" y="122" class="chart-x-label font-bold">Now</text>
-                    <text x="288" y="122" class="chart-x-label" text-anchor="end">+6h</text>
-                  </svg>
+                  <canvas id="chart-spo2"></canvas>
                 </div>
               </div>
 
@@ -1026,28 +984,7 @@
               <div class="vital-chart-card">
                 <h3 class="chart-title">Systolic blood pressure</h3>
                 <div class="chart-canvas-wrap">
-                  <svg viewBox="0 0 300 130" class="mini-chart-svg" preserveAspectRatio="none">
-                    <!-- Threshold line (SBP <= 100) -->
-                    <rect x="25" y="70" width="265" height="35" fill="#FEE2E2" opacity="0.45"/>
-                    <line x1="25" y1="70" x2="290" y2="70" stroke="#E53945" stroke-width="1.5" stroke-dasharray="4 3"/>
-                    <!-- Axes -->
-                    <line x1="25" y1="10" x2="25" y2="105" stroke="#CBD5E1" stroke-width="1"/>
-                    <line x1="25" y1="105" x2="290" y2="105" stroke="#CBD5E1" stroke-width="1"/>
-                    <!-- Ticks -->
-                    <text x="20" y="24" class="chart-tick" text-anchor="end">160</text>
-                    <text x="20" y="66" class="chart-tick" text-anchor="end">120</text>
-                    <text x="20" y="108" class="chart-tick" text-anchor="end">80</text>
-                    <!-- Actual line -->
-                    <path d="M25,56 L70,50 L120,54 L170,68 L220,74" fill="none" stroke="#8B5CF6" stroke-width="2.4" stroke-linecap="round"/>
-                    <!-- Forecast line -->
-                    <path d="M220,74 L255,73 L288,71" fill="none" stroke="#8B5CF6" stroke-width="2.4" stroke-dasharray="4 4" stroke-linecap="round"/>
-                    <circle cx="220" cy="74" r="3" fill="#8B5CF6"/>
-                    <!-- X labels -->
-                    <text x="25" y="122" class="chart-x-label">-24h</text>
-                    <text x="120" y="122" class="chart-x-label">-12h</text>
-                    <text x="220" y="122" class="chart-x-label font-bold">Now</text>
-                    <text x="288" y="122" class="chart-x-label" text-anchor="end">+6h</text>
-                  </svg>
+                  <canvas id="chart-sbp"></canvas>
                 </div>
               </div>
 
@@ -1055,28 +992,7 @@
               <div class="vital-chart-card">
                 <h3 class="chart-title">Heart rate (pulse)</h3>
                 <div class="chart-canvas-wrap">
-                  <svg viewBox="0 0 300 130" class="mini-chart-svg" preserveAspectRatio="none">
-                    <!-- Threshold line (Pulse >= 91) -->
-                    <rect x="25" y="10" width="265" height="42" fill="#FEF3C7" opacity="0.45"/>
-                    <line x1="25" y1="52" x2="290" y2="52" stroke="#E9A313" stroke-width="1.5" stroke-dasharray="4 3"/>
-                    <!-- Axes -->
-                    <line x1="25" y1="10" x2="25" y2="105" stroke="#CBD5E1" stroke-width="1"/>
-                    <line x1="25" y1="105" x2="290" y2="105" stroke="#CBD5E1" stroke-width="1"/>
-                    <!-- Ticks -->
-                    <text x="20" y="24" class="chart-tick" text-anchor="end">150</text>
-                    <text x="20" y="66" class="chart-tick" text-anchor="end">100</text>
-                    <text x="20" y="108" class="chart-tick" text-anchor="end">50</text>
-                    <!-- Actual line -->
-                    <path d="M25,76 L70,72 L120,68 L170,60 L220,48" fill="none" stroke="#F59E0B" stroke-width="2.4" stroke-linecap="round"/>
-                    <!-- Forecast line -->
-                    <path d="M220,48 L255,42 L288,36" fill="none" stroke="#F59E0B" stroke-width="2.4" stroke-dasharray="4 4" stroke-linecap="round"/>
-                    <circle cx="220" cy="48" r="3" fill="#F59E0B"/>
-                    <!-- X labels -->
-                    <text x="25" y="122" class="chart-x-label">-24h</text>
-                    <text x="120" y="122" class="chart-x-label">-12h</text>
-                    <text x="220" y="122" class="chart-x-label font-bold">Now</text>
-                    <text x="288" y="122" class="chart-x-label" text-anchor="end">+6h</text>
-                  </svg>
+                  <canvas id="chart-pulse"></canvas>
                 </div>
               </div>
 
@@ -1084,28 +1000,7 @@
               <div class="vital-chart-card">
                 <h3 class="chart-title">Temperature</h3>
                 <div class="chart-canvas-wrap">
-                  <svg viewBox="0 0 300 130" class="mini-chart-svg" preserveAspectRatio="none">
-                    <!-- Threshold line (Temp >= 38.1) -->
-                    <rect x="25" y="10" width="265" height="34" fill="#FEE2E2" opacity="0.45"/>
-                    <line x1="25" y1="44" x2="290" y2="44" stroke="#E53945" stroke-width="1.5" stroke-dasharray="4 3"/>
-                    <!-- Axes -->
-                    <line x1="25" y1="10" x2="25" y2="105" stroke="#CBD5E1" stroke-width="1"/>
-                    <line x1="25" y1="105" x2="290" y2="105" stroke="#CBD5E1" stroke-width="1"/>
-                    <!-- Ticks -->
-                    <text x="20" y="24" class="chart-tick" text-anchor="end">40</text>
-                    <text x="20" y="66" class="chart-tick" text-anchor="end">38</text>
-                    <text x="20" y="108" class="chart-tick" text-anchor="end">36</text>
-                    <!-- Actual line -->
-                    <path d="M25,72 L70,68 L120,62 L170,56 L220,50" fill="none" stroke="#0D9488" stroke-width="2.4" stroke-linecap="round"/>
-                    <!-- Forecast line -->
-                    <path d="M220,50 L255,44 L288,38" fill="none" stroke="#0D9488" stroke-width="2.4" stroke-dasharray="4 4" stroke-linecap="round"/>
-                    <circle cx="220" cy="50" r="3" fill="#0D9488"/>
-                    <!-- X labels -->
-                    <text x="25" y="122" class="chart-x-label">-24h</text>
-                    <text x="120" y="122" class="chart-x-label">-12h</text>
-                    <text x="220" y="122" class="chart-x-label font-bold">Now</text>
-                    <text x="288" y="122" class="chart-x-label" text-anchor="end">+6h</text>
-                  </svg>
+                  <canvas id="chart-temp"></canvas>
                 </div>
               </div>
 
@@ -1115,40 +1010,7 @@
             <div class="report-news2-card">
               <h3 class="news2-chart-title">NEWS2 score over time</h3>
               <div class="news2-svg-container">
-                <svg viewBox="0 0 900 200" class="news2-full-chart" preserveAspectRatio="none">
-                  <!-- Shaded High Risk Region (Score >= 7) -->
-                  <rect x="50" y="16" width="820" height="48" fill="#FEE2E2" opacity="0.45"/>
-                  <line x1="50" y1="64" x2="870" y2="64" stroke="#E53945" stroke-width="1.8" stroke-dasharray="5 4"/>
-                  <text x="860" y="56" class="threshold-label label-high" text-anchor="end">High risk threshold (7)</text>
-
-                  <!-- Shaded Medium Risk Region (Score 5 to 7) -->
-                  <rect x="50" y="64" width="820" height="34" fill="#FEF3C7" opacity="0.45"/>
-                  <line x1="50" y1="98" x2="870" y2="98" stroke="#E9A313" stroke-width="1.8" stroke-dasharray="5 4"/>
-                  <text x="860" y="90" class="threshold-label label-med" text-anchor="end">Medium risk threshold (5)</text>
-
-                  <!-- Axes -->
-                  <line x1="50" y1="16" x2="50" y2="165" stroke="#CBD5E1" stroke-width="1.2"/>
-                  <line x1="50" y1="165" x2="870" y2="165" stroke="#CBD5E1" stroke-width="1.2"/>
-
-                  <!-- Y-Ticks -->
-                  <text x="42" y="22" class="chart-tick" text-anchor="end">10</text>
-                  <text x="42" y="68" class="chart-tick" text-anchor="end">7</text>
-                  <text x="42" y="102" class="chart-tick" text-anchor="end">5</text>
-                  <text x="42" y="169" class="chart-tick" text-anchor="end">0</text>
-
-                  <!-- Actual Historical NEWS2 Curve -->
-                  <path d="M50,152 L170,146 L280,140 L380,122 L480,116 L580,102 L660,82 L720,60" fill="none" stroke="#0B1F41" stroke-width="3" stroke-linecap="round"/>
-
-                  <!-- Forecasted Continuation -->
-                  <path d="M720,60 L780,44 L850,30" fill="none" stroke="#1765D1" stroke-width="3" stroke-dasharray="6 5" stroke-linecap="round"/>
-                  <circle cx="720" cy="60" r="4.5" fill="#0B1F41"/>
-
-                  <!-- X-Axis Labels -->
-                  <text x="50" y="186" class="chart-x-label">-24h</text>
-                  <text x="350" y="186" class="chart-x-label">-12h</text>
-                  <text x="720" y="186" class="chart-x-label font-bold">Now</text>
-                  <text x="860" y="186" class="chart-x-label" text-anchor="end">+6h</text>
-                </svg>
+                <canvas id="chart-news2"></canvas>
               </div>
             </div>
 
@@ -1373,6 +1235,15 @@
 
   </div>
 
+  <!-- Chart.js Library (Local bundle with CDN fallback) -->
+  <script src="assets/chart.min.js"></script>
+  <script>
+    if (typeof Chart === 'undefined') {
+      const cdnScript = document.createElement('script');
+      cdnScript.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+      document.head.appendChild(cdnScript);
+    }
+  </script>
   <!-- Main JavaScript File -->
   <script src="script.js"></script>
 </body>
