@@ -53,6 +53,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const surveillanceLowCount = document.getElementById('surveillance-low-count');
   const caughtUpBanner = document.getElementById('caught-up-banner');
 
+
+  // Patient Lookup Elements
+  const patientLookupView = document.getElementById('patient-lookup-view');
+  const lookupWardSelect = document.getElementById('lookup-ward-select');
+  const lookupPatientInput = document.getElementById('lookup-patient-input');
+  const lookupClearBtn = document.getElementById('lookup-clear-btn');
+  const lookupResultsSection = document.getElementById('lookup-results-section');
+  const lookupResultsHeading = document.getElementById('lookup-results-heading');
+  const lookupResultsBody = document.getElementById('lookup-results-body');
+  const lookupInitialState = document.getElementById('lookup-initial-state');
+  const lookupNoResultsState = document.getElementById('lookup-no-results-state');
+  const noMatchQueryText = document.getElementById('no-match-query-text');
+
   // Patient Report Elements
   const reportBackBtn = document.getElementById('report-back-btn');
   const reportTimestampText = document.getElementById('report-timestamp-text');
@@ -914,6 +927,125 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 /* ==========================================================================
+     PART A: PATIENT LOOKUP SEARCH ENGINE
+     ========================================================================== */
+  function filterLookupPatients(query) {
+    const clean = (query || '').trim().toLowerCase();
+    if (!clean) return [];
+
+    return mockPatients.filter(p => 
+      p.patientName.toLowerCase().includes(clean) || 
+      p.bedNumber.toLowerCase().includes(clean)
+    );
+  }
+
+  function handleLookupInput() {
+    if (!lookupPatientInput) return;
+    const query = lookupPatientInput.value.trim();
+
+    // Toggle clear button
+    if (lookupClearBtn) {
+      lookupClearBtn.style.display = query ? 'block' : 'none';
+    }
+
+    if (!query) {
+      if (lookupInitialState) lookupInitialState.style.display = 'flex';
+      if (lookupResultsSection) lookupResultsSection.style.display = 'none';
+      if (lookupNoResultsState) lookupNoResultsState.style.display = 'none';
+      return;
+    }
+
+    const matches = filterLookupPatients(query);
+
+    if (matches.length > 0) {
+      if (lookupInitialState) lookupInitialState.style.display = 'none';
+      if (lookupNoResultsState) lookupNoResultsState.style.display = 'none';
+      if (lookupResultsSection) lookupResultsSection.style.display = 'block';
+
+      if (lookupResultsHeading) {
+        lookupResultsHeading.textContent = `${matches.length} result${matches.length > 1 ? 's' : ''} for "${query}" in Ward 4B`;
+      }
+
+      if (lookupResultsBody) {
+        lookupResultsBody.innerHTML = matches.map(p => `
+          <div class="lookup-patient-row patient-row" data-bed="${p.bedNumber}" data-name="${p.patientName}" role="row" tabindex="0">
+            <div class="col-lookup-tier" role="cell">
+              <span class="tier-bar tier-bar-${p.tier}" title="${p.tier} risk"></span>
+            </div>
+            <div class="col-lookup-bed" role="cell">${p.bedNumber}</div>
+            <div class="col-lookup-name" role="cell">
+              <span class="patient-name">${p.patientName}</span>
+              <span class="patient-demographics">${p.demographics}</span>
+            </div>
+            <div class="col-lookup-ward" role="cell">
+              <div>${p.ward}</div>
+              <div style="font-size: 0.78rem; color: #64748B;">${p.department}</div>
+            </div>
+            <div class="col-lookup-action" role="cell" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </div>
+          </div>
+        `).join('');
+
+        // Attach click listeners to rows -> Navigate to Patient Full Report
+        const rows = lookupResultsBody.querySelectorAll('.lookup-patient-row');
+        rows.forEach(row => {
+          row.addEventListener('click', () => {
+            const bed = row.getAttribute('data-bed');
+            openPatientReport(bed, 'lookup');
+          });
+
+          row.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              row.click();
+            }
+          });
+        });
+      }
+    } else {
+      // No matches found
+      if (lookupInitialState) lookupInitialState.style.display = 'none';
+      if (lookupResultsSection) lookupResultsSection.style.display = 'none';
+      if (lookupNoResultsState) lookupNoResultsState.style.display = 'flex';
+      if (noMatchQueryText) noMatchQueryText.textContent = query;
+    }
+  }
+
+  if (lookupPatientInput) {
+    lookupPatientInput.addEventListener('input', handleLookupInput);
+  }
+
+  if (lookupClearBtn) {
+    lookupClearBtn.addEventListener('click', () => {
+      if (lookupPatientInput) {
+        lookupPatientInput.value = '';
+        lookupPatientInput.focus();
+        handleLookupInput();
+      }
+    });
+  }
+
+  // Top-bar search integration: jumping to Lookup or Report
+  if (globalPatientSearch) {
+    globalPatientSearch.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const query = globalPatientSearch.value.trim();
+        if (query) {
+          navigateTo('dashboard', 'lookup');
+          if (lookupPatientInput) {
+            lookupPatientInput.value = query;
+            handleLookupInput();
+          }
+        }
+      }
+    });
+  }
+
+  
+  /* ==========================================================================
      PART B: PATIENT FULL REPORT ENGINE
      ========================================================================== */
   /**
@@ -1290,6 +1422,7 @@ document.addEventListener('DOMContentLoaded', () => {
    * @param {string} targetKey - 'ward' | 'surveillance' | 'lookup' | 'alerts' | 'patient/{id}'
    */
   function switchDashboardSlot(targetKey) {
+    const topbarSearch = document.querySelector('.topbar-search-wrap'); if(topbarSearch) topbarSearch.style.visibility = (targetKey === 'lookup') ? 'hidden' : 'visible';
     const isPatientReport = targetKey.startsWith('patient/');
 
     // Sidebar active styling
@@ -1306,6 +1439,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Subview display toggling
     if (wardOverviewView) wardOverviewView.style.display = 'none';
+    if (patientLookupView) patientLookupView.style.display = 'none';
     if (highSurveillanceView) highSurveillanceView.style.display = 'none';
     
     if (patientReportView) patientReportView.style.display = 'none';
@@ -1322,6 +1456,13 @@ document.addEventListener('DOMContentLoaded', () => {
       if (highSurveillanceView) highSurveillanceView.style.display = 'block';
       renderHighSurveillance();
     
+    } else if (targetKey === 'lookup') {
+      lastActiveDashboardTab = 'lookup';
+      if (patientLookupView) patientLookupView.style.display = 'block';
+      if (lookupPatientInput) {
+        setTimeout(() => lookupPatientInput.focus(), 50);
+        handleLookupInput();
+      }
     } else if (targetKey === 'alerts') {
       lastActiveDashboardTab = 'alerts';
       if (alertsHistoryView) alertsHistoryView.style.display = 'block';

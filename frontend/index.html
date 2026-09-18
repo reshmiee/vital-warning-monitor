@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aarogya — Patient Deterioration Forecasting & Trajectory Monitoring</title>
+  <title>Aarogya</title>
   <meta name="description" content="Aarogya forecasts patient vitals and scores trajectories against clinical NEWS2 rules to catch deterioration before it happens.">
   
   <!-- Google Fonts: Newsreader (editorial serif) & Public Sans (clean sans-serif) -->
@@ -474,7 +474,17 @@
 
             <!-- 3. Patient Lookup -->
             <li class="nav-item">
-              
+              <button type="button" class="btn btn-ghost nav-link" id="nav-item-lookup" data-target="lookup">
+                <span class="nav-active-bar" aria-hidden="true"></span>
+                <span class="nav-icon-wrap" aria-hidden="true">
+                  <!-- Search Icon -->
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+                </span>
+                <span class="nav-label">Patient lookup</span>
+              </button>
             </li>
 
             <!-- 4. Alerts History -->
@@ -729,6 +739,110 @@
 
           </div>
 
+          <!-- ============================================================
+               SLOT 3: PATIENT LOOKUP PAGE (PART A)
+               ============================================================ -->
+          <div id="patient-lookup-view" class="dashboard-subview" style="display: none;">
+            
+            <!-- Page Header -->
+            <div class="ward-page-header">
+              <h1 class="ward-page-title">Patient lookup</h1>
+              <p class="ward-page-subtitle">Search for a patient by name or bed number.</p>
+            </div>
+
+            <!-- Lookup Search Card -->
+            <div class="lookup-card-container">
+              
+              <!-- Ward Dropdown -->
+              <div class="lookup-field-group">
+                <label for="lookup-ward-select" class="lookup-field-label">Ward</label>
+                <div class="lookup-select-wrap">
+                  <select id="lookup-ward-select" class="lookup-ward-select" aria-label="Select Ward">
+                    <option value="4B">Ward 4B (General Medicine)</option>
+                    <option value="4A">Ward 4A (Cardiology)</option>
+                    <option value="ICU">ICU Step-down</option>
+                  </select>
+                  <span class="lookup-select-chevron" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </span>
+                </div>
+              </div>
+
+              <!-- Search Input -->
+              <div class="lookup-field-group">
+                <label for="lookup-patient-input" class="lookup-field-label">Search patient</label>
+                <div class="lookup-input-wrap">
+                  <span class="lookup-input-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                  </span>
+                  <input 
+                    type="text" 
+                    id="lookup-patient-input" 
+                    class="lookup-patient-input" 
+                    placeholder="Search by name or bed number..."
+                    aria-label="Search patient by name or bed number"
+                    autocomplete="off"
+                  >
+                  <button type="button" id="lookup-clear-btn" class="btn btn-ghost lookup-clear-btn" aria-label="Clear search text" style="display: none;">×</button>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Results Section (Visible when matches exist) -->
+            <div id="lookup-results-section" style="display: none;">
+              <h3 class="lookup-results-header" id="lookup-results-heading">Results</h3>
+              
+              <div class="ward-table-wrapper lookup-table-wrapper">
+                <div class="lookup-table-header" role="row">
+                  <div class="col-lookup-tier" aria-hidden="true"></div>
+                  <div class="col-lookup-bed">Bed</div>
+                  <div class="col-lookup-name">Patient name</div>
+                  <div class="col-lookup-ward">Ward</div>
+                  <div class="col-lookup-action" aria-hidden="true"></div>
+                </div>
+
+                <div class="ward-table-body" id="lookup-results-body" role="rowgroup">
+                  <!-- Injected dynamically -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Initial Empty State (Start typing) -->
+            <div id="lookup-initial-state" class="lookup-state-card">
+              <div class="lookup-state-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#216A86" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+              </div>
+              <h2 class="lookup-state-title">Start typing a name or bed number.</h2>
+              <p class="lookup-state-text">Search for a patient in the selected ward.</p>
+            </div>
+
+            <!-- No Matches State -->
+            <div id="lookup-no-results-state" class="lookup-state-card" style="display: none;">
+              <div class="lookup-state-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#216A86" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                  <line x1="10" y1="9" x2="8" y2="9"></line>
+                </svg>
+              </div>
+              <h2 class="lookup-state-title">No patients match "<span id="no-match-query-text"></span>"</h2>
+              <p class="lookup-state-text">Try a different name or bed number.</p>
+            </div>
+
+          </div>
+
+          
           <!-- ============================================================
                SLOT 4: PATIENT FULL REPORT PAGE (PART B)
                ============================================================ -->
