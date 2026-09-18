@@ -9,10 +9,12 @@ if BASE_DIR not in sys.path:
 from backend.schemas import (
     PatientInferenceRequest, InferenceResponse,
     PerMinuteScore, FeatureContribution,
+    PatientTrend, VitalForecasts, News2Forecast,
 )
 from backend.model_loader import get_predictor
 from backend.supabase_client import fetch_recent_vitals
-from model.inference import DeteriorationRiskPredictor, run_inference
+from model.inference import DeteriorationRiskPredictor, run_inference, _payload_to_internal_df
+from model.forecast import run_full_forecast
 import httpx
 
 router = APIRouter(prefix="/predict", tags=["Prediction"])
@@ -21,12 +23,14 @@ router = APIRouter(prefix="/predict", tags=["Prediction"])
 @router.post(
     "/run",
     response_model=InferenceResponse,
-    summary="Run deterioration-risk inference for a patient",
+    summary="Run deterioration inference, 15-min vital & NEWS2 forecasts, and trajectory trend for a patient",
     description=(
-        "Accepts a patient_id, fetches the last 30 minutes of vitals from Supabase, "
-        "runs the full feature-engineering + XGBoost inference pipeline, and returns: "
-        "risk score, alert flag, tier, per-minute breakdown, "
-        "SHAP feature contributions (sorted by influence), and raw feature values."
+        "Accepts a patient_id, fetches the last 30 minutes of vitals from Supabase, and returns:\n"
+        "1. Trained XGBoost deterioration prediction (risk_score, alert, risk_tier, per_minute_scores)\n"
+        "2. SHAP feature contributions explaining what drove the score\n"
+        "3. 15-minute forward forecasts for all 5 vitals with clinical danger zones (NORMAL, WARNING, DANGER)\n"
+        "4. 15-minute forward NEWS2 forecast categorized into SAFE, MONITOR, or CRITICAL zones\n"
+        "5. Patient trajectory classification (IMPROVING / STABLE / WORSENING) with clinical explanation"
     ),
 )
 async def run_prediction(
@@ -52,7 +56,7 @@ async def run_prediction(
             detail=f"No vitals found for patient '{body.patient_id}' in the last 30 minutes.",
         )
 
-    # -- Step 2: run inference (feature engineering + model + SHAP) -----------
+    # -- Step 2: run model inference & SHAP explanation ----------------------
     payload = {
         "patient_id": body.patient_id,
         "window_minutes": 30,
@@ -65,7 +69,19 @@ async def run_prediction(
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Inference error: {exc}")
 
-    # -- Step 3: return typed response ----------------------------------------
+    # -- Step 3: run 15-minute VAR forecasts, NEWS2 trajectory & trend -------
+    try:
+        vitals_df = _payload_to_internal_df(payload)
+        forecast_result = run_full_forecast(vitals_df)
+    except Exception as exc:
+        # Graceful fallback: model predictions still return even if forecasting encounters an issue
+        forecast_result = None
+
+    # -- Step 4: package full response ---------------------------------------
+    trend_obj = PatientTrend(**forecast_result["trend"]) if forecast_result else None
+    vital_fc_obj = VitalForecasts(**forecast_result["vital_forecasts"]) if forecast_result else None
+    news2_fc_obj = News2Forecast(**forecast_result["news2_forecast"]) if forecast_result else None
+
     return InferenceResponse(
         patient_id=result["patient_id"],
         evaluated_at_minute=result["evaluated_at_minute"],
@@ -78,4 +94,7 @@ async def run_prediction(
             FeatureContribution(**c) for c in result.get("feature_contributions", [])
         ],
         feature_values=result.get("feature_values", {}),
+        trend=trend_obj,
+        vital_forecasts=vital_fc_obj,
+        news2_forecast=news2_fc_obj,
     )
