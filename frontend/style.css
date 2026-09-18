@@ -738,7 +738,7 @@ p {
 }
 
 /* ==========================================================================
-   VIEW 2: SENTINEL LOGIN PAGE STYLES
+   VIEW 2: AAROGYA LOGIN PAGE STYLES
    Tokens: Background #F5FAFD, Accent #216A86, Border #D6E0E8, Error #E53935
    ========================================================================== */
 #login-page.page-view.active {
@@ -810,12 +810,12 @@ p {
   gap: 12px;
 }
 
-.sentinel-logo-icon {
+.aarogya-logo-icon {
   width: 44px;
   height: 28px;
 }
 
-.sentinel-brand-name {
+.aarogya-brand-name {
   font-family: var(--font-serif);
   font-size: 2rem;
   font-weight: 600;
@@ -823,7 +823,7 @@ p {
   letter-spacing: -0.5px;
 }
 
-.sentinel-brand-eyebrow {
+.aarogya-brand-eyebrow {
   font-family: var(--font-sans);
   font-size: 0.75rem;
   font-weight: 700;
@@ -855,7 +855,7 @@ p {
 }
 
 /* Form Styles */
-.sentinel-form {
+.aarogya-form {
   display: flex;
   flex-direction: column;
 }
@@ -950,7 +950,7 @@ p {
   margin-bottom: 8px;
 }
 
-.btn-sentinel-login {
+.btn-aarogya-login {
   width: 100%;
   height: 48px;
   background-color: #216A86;
@@ -969,13 +969,13 @@ p {
   box-shadow: 0 2px 8px rgba(33, 106, 134, 0.18);
 }
 
-.btn-sentinel-login:hover {
+.btn-aarogya-login:hover {
   background-color: #1a566d;
   box-shadow: 0 4px 14px rgba(33, 106, 134, 0.28);
   transform: translateY(-1px);
 }
 
-.btn-sentinel-login:active {
+.btn-aarogya-login:active {
   transform: translateY(0);
 }
 
@@ -1039,7 +1039,7 @@ p {
 }
 
 /* ==========================================================================
-   VIEW 3: SENTINEL DASHBOARD SHELL STYLES
+   VIEW 3: AAROGYA DASHBOARD SHELL STYLES
    Persistent Frame: Sidebar (#EDF5F9), Topbar (#F5FAFD), Main Content (#FFFFFF)
    ========================================================================== */
 #dashboard-shell.page-view.active {

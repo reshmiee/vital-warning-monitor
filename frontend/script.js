@@ -1,5 +1,5 @@
 /**
- * Sentinel / Aarogya — Patient Deterioration Forecasting System
+ * Aarogya — Patient Deterioration Forecasting System
  * Client-Side Router, Mock Authentication, Ward Overview, High Surveillance,
  * Patient Lookup & Patient Full Report Engine
  */
@@ -17,9 +17,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const shellLogoutBtn = document.getElementById('shell-logout-btn');
 
   // Login Form & Inputs
-  const sentinelLoginForm = document.getElementById('sentinel-login-form');
-  const usernameInput = document.getElementById('sentinel-username');
-  const passwordInput = document.getElementById('sentinel-password');
+  const aarogyaLoginForm = document.getElementById('aarogya-login-form');
+  const usernameInput = document.getElementById('aarogya-username');
+  const passwordInput = document.getElementById('aarogya-password');
   const groupUsername = document.getElementById('group-username');
   const groupPassword = document.getElementById('group-password');
   const loginSubmitBtn = document.getElementById('login-submit-btn');
@@ -1373,7 +1373,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (shellLogoutBtn) {
     shellLogoutBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      sessionStorage.removeItem('sentinel_auth');
+      sessionStorage.removeItem('aarogya_auth');
       navigateTo('landing');
     });
   }
@@ -1409,8 +1409,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Handle Mock Login Submission & Validation
-  if (sentinelLoginForm) {
-    sentinelLoginForm.addEventListener('submit', (e) => {
+  if (aarogyaLoginForm) {
+    aarogyaLoginForm.addEventListener('submit', (e) => {
       e.preventDefault();
 
       const usernameVal = usernameInput ? usernameInput.value.trim() : '';
@@ -1443,7 +1443,7 @@ document.addEventListener('DOMContentLoaded', () => {
         signingInState.style.display = 'flex';
       }
 
-      sessionStorage.setItem('sentinel_auth', JSON.stringify({
+      sessionStorage.setItem('aarogya_auth', JSON.stringify({
         authenticated: true,
         user: usernameVal,
         role: 'Admin',
