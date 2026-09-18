@@ -557,6 +557,12 @@
         <!-- Right: Admin User & Logout -->
         <div class="topbar-actions">
           
+          <!-- System Backend & DB Status Badge -->
+          <div class="system-status-pill" id="system-status-pill" title="Live connection to FastAPI, Supabase Database & ML Model">
+            <span class="status-indicator-dot dot-live" id="system-status-dot"></span>
+            <span class="status-indicator-text" id="system-status-text">Connecting...</span>
+          </div>
+
           <!-- User Profile -->
           <div class="topbar-user-profile" id="topbar-user-profile">
             <span class="user-avatar-circle" aria-hidden="true">
@@ -890,6 +896,25 @@
               <div class="report-trend-panel" id="report-trend-box">
                 <span class="report-trend-arrow-text trend-rising" id="report-trend-value">↗ Rising</span>
                 <span class="report-trend-horizon">Increasing risk over next 6 hours</span>
+              </div>
+            </div>
+
+            <!-- Live ML Model Inference Card -->
+            <div class="report-ml-insight-card" id="report-ml-card">
+              <div class="ml-insight-badge">
+                <span class="ml-icon" aria-hidden="true">🧠</span>
+                <div class="ml-info">
+                  <span class="ml-title">XGBoost ML Deterioration Assessment</span>
+                  <span class="ml-meta" id="ml-model-meta">Trained Classifier (191 Features) | Optimal Alert Threshold: 0.2362</span>
+                </div>
+              </div>
+              <div class="ml-score-block">
+                <span class="ml-score-label">Predicted Risk:</span>
+                <span class="ml-score-val" id="ml-risk-score">--</span>
+                <span class="ml-score-tier tier-low" id="ml-risk-tier">--</span>
+              </div>
+              <div class="ml-alert-callout" id="ml-alert-banner">
+                <span id="ml-alert-text">Running live inference against Supabase vitals stream...</span>
               </div>
             </div>
 

@@ -109,6 +109,150 @@ document.addEventListener('DOMContentLoaded', () => {
   let lastActiveDashboardTab = 'ward'; // 'ward' | 'surveillance' | 'lookup' | 'alerts'
   let currentReportPatient = null;
 
+  // ==========================================================================
+  // BACKEND, SUPABASE & MODEL INTEGRATION ENGINE
+  // ==========================================================================
+  const API_BASE_URL = 'http://127.0.0.1:8000';
+  let isBackendConnected = false;
+
+  function getPatientDbId(patient) {
+    if (!patient) return 'P001';
+    if (patient.dbId) return patient.dbId;
+    if (patient.id && /^P\d{3}$/i.test(patient.id)) return patient.id.toUpperCase();
+    if (patient.bedNumber) {
+      const match = patient.bedNumber.match(/4B-(\d+)/i);
+      if (match) {
+        const num = parseInt(match[1], 10);
+        return `P${num.toString().padStart(3, '0')}`;
+      }
+    }
+    return 'P001';
+  }
+
+  function updateStatusBadge(connected) {
+    const pill = document.getElementById('system-status-pill');
+    const dot = document.getElementById('system-status-dot');
+    const text = document.getElementById('system-status-text');
+    if (!pill || !dot || !text) return;
+
+    if (connected) {
+      pill.className = 'system-status-pill status-connected';
+      dot.className = 'status-indicator-dot dot-live';
+      text.textContent = 'Live: Backend, DB & Model Connected';
+    } else {
+      pill.className = 'system-status-pill status-fallback';
+      dot.className = 'status-indicator-dot dot-fallback';
+      text.textContent = 'Demo Mode (Backend Offline)';
+    }
+  }
+
+  async function checkBackendHealth() {
+    try {
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), 3000);
+      const res = await fetch(`${API_BASE_URL}/health`, { method: 'GET', signal: ctrl.signal });
+      clearTimeout(t);
+      if (res.ok) {
+        isBackendConnected = true;
+        updateStatusBadge(true);
+        return true;
+      }
+    } catch (err) {
+      // Backend offline
+    }
+    isBackendConnected = false;
+    updateStatusBadge(false);
+    return false;
+  }
+
+  async function fetchLivePatients() {
+    try {
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), 6000);
+      const res = await fetch(`${API_BASE_URL}/patients`, { signal: ctrl.signal });
+      clearTimeout(t);
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) {
+          data.forEach(lp => {
+            const idx = mockPatients.findIndex(p => p.bedNumber === lp.bedNumber || p.id === lp.id);
+            if (idx !== -1) {
+              mockPatients[idx] = { ...mockPatients[idx], ...lp };
+            } else {
+              mockPatients.push(lp);
+            }
+          });
+          isBackendConnected = true;
+          updateStatusBadge(true);
+          if (typeof renderWardPatients === 'function') renderWardPatients();
+          if (typeof renderHighSurveillance === 'function') renderHighSurveillance();
+        }
+      }
+    } catch (err) {
+      console.warn('Could not fetch live patients:', err);
+    }
+  }
+
+  async function fetchPatientLiveInference(patient) {
+    const mlScoreVal = document.getElementById('ml-risk-score');
+    const mlRiskTier = document.getElementById('ml-risk-tier');
+    const mlAlertText = document.getElementById('ml-alert-text');
+
+    const dbId = getPatientDbId(patient);
+
+    if (!isBackendConnected) {
+      const fallbackScore = patient.tier === 'high' ? '0.342' : (patient.tier === 'medium' ? '0.198' : '0.084');
+      if (mlScoreVal) mlScoreVal.textContent = fallbackScore;
+      if (mlRiskTier) {
+        mlRiskTier.textContent = patient.tier.toUpperCase();
+        mlRiskTier.className = `ml-score-tier tier-${patient.tier}`;
+      }
+      if (mlAlertText) {
+        mlAlertText.textContent = patient.tier === 'high'
+          ? '⚠️ Offline simulation: Deterioration threshold flagged for high-risk vitals.'
+          : 'ℹ️ Offline simulation: Vitals monitored within clinical limits.';
+      }
+      return null;
+    }
+
+    try {
+      if (mlAlertText) mlAlertText.textContent = `Scoring 30-min window for patient ${dbId} with trained XGBoost model...`;
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), 8000);
+      const res = await fetch(`${API_BASE_URL}/predict/run`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ patient_id: dbId, minutes: 30 }),
+        signal: ctrl.signal
+      });
+      clearTimeout(t);
+
+      if (res.ok) {
+        const pred = await res.json();
+        if (mlScoreVal) mlScoreVal.textContent = pred.risk_score.toFixed(3);
+        if (mlRiskTier) {
+          const tier = (pred.risk_tier || 'LOW').toLowerCase();
+          mlRiskTier.textContent = pred.risk_tier;
+          mlRiskTier.className = `ml-score-tier tier-${tier}`;
+        }
+        if (mlAlertText) {
+          const alertPct = (pred.risk_score * 100).toFixed(1);
+          const thPct = (pred.optimal_threshold * 100).toFixed(1);
+          const expl = pred.trend && pred.trend.explanation ? pred.trend.explanation : '';
+          if (pred.deterioration_alert) {
+            mlAlertText.innerHTML = `🚨 <strong>DETERIORATION ALERT:</strong> XGBoost risk score ${alertPct}% exceeds optimal threshold (${thPct}%). ${expl}`;
+          } else {
+            mlAlertText.innerHTML = `✅ <strong>STABLE:</strong> XGBoost risk score ${alertPct}% is within safe limit (${thPct}%). ${expl}`;
+          }
+        }
+        return pred;
+      }
+    } catch (err) {
+      console.warn('Inference request failed:', err);
+    }
+    return null;
+  }
+
   // Shared Mock Patient Dataset (Single Source of Truth across all views)
   const mockPatients = [
     {
@@ -1175,10 +1319,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Transition view inside dashboard shell
     navigateTo('dashboard', `patient/${patient.bedNumber}`);
 
-    // Render interactive Chart.js graphs for this patient
-    setTimeout(() => {
-      renderPatientCharts(patient);
-    }, 60);
+    // Fetch live model inference from backend/Supabase & render Chart.js graphs
+    fetchPatientLiveInference(patient).then(livePred => {
+      renderPatientCharts(patient, livePred);
+    }).catch(() => {
+      renderPatientCharts(patient, null);
+    });
   }
 
   // Report Back Button Click
@@ -1192,13 +1338,17 @@ document.addEventListener('DOMContentLoaded', () => {
   if (reportRefreshBtn) {
     reportRefreshBtn.addEventListener('click', () => {
       if (reportTimestampText) {
-        reportTimestampText.textContent = 'Updating...';
+        reportTimestampText.textContent = 'Updating live inference...';
         setTimeout(() => {
           reportTimestampText.textContent = 'Last updated: Just now';
           if (currentReportPatient) {
-            renderPatientCharts(currentReportPatient);
+            fetchPatientLiveInference(currentReportPatient).then(livePred => {
+              renderPatientCharts(currentReportPatient, livePred);
+            }).catch(() => {
+              renderPatientCharts(currentReportPatient, null);
+            });
           }
-        }, 500);
+        }, 300);
       }
     });
   }
@@ -1222,9 +1372,91 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /**
-   * Generates realistic 24h past + 6h forecast data points for each patient
+   * Generates realistic time series for patient, utilizing live ML forecasts when available
    */
-  function generatePatientVitalSeries(patient) {
+  function generatePatientVitalSeries(patient, livePred = null) {
+    // If live model forecast is available from backend
+    if (livePred && livePred.vital_forecasts && livePred.vital_forecasts.vitals) {
+      const vf = livePred.vital_forecasts.vitals;
+      const nf = livePred.news2_forecast || {};
+      const labels = ['-30m', '-20m', '-10m', '-5m', 'Now', '+5m', '+10m', '+15m'];
+
+      const v = patient.vitals || {};
+      const nowRR = v.respiratoryRate || 20;
+      const nowSpo2 = v.oxygenSaturation || 98;
+      const nowSBP = v.systolicBP || 120;
+      const nowPulse = v.pulse || 72;
+      const nowTemp = v.temperature || 36.8;
+
+      const getFc = (vitalObj, nowVal) => {
+        if (!vitalObj || !vitalObj.forecast) return [nowVal, nowVal, nowVal];
+        const f = vitalObj.forecast;
+        return [
+          f[4] !== undefined ? f[4] : nowVal,
+          f[9] !== undefined ? f[9] : nowVal,
+          f[14] !== undefined ? f[14] : nowVal
+        ];
+      };
+
+      const fcRR = getFc(vf.RespRate, nowRR);
+      const fcSpo2 = getFc(vf.SpO2, nowSpo2);
+      const fcSBP = getFc(vf.SystolicBP, nowSBP);
+      const fcPulse = getFc(vf.PulseRate, nowPulse);
+      const fcTemp = getFc(vf.Temperature, nowTemp);
+
+      const makeSeries = (nowVal, fcArr, threshold, unit, minVal, maxVal, decimals = 0) => {
+        const trend = (fcArr[2] - nowVal);
+        const p1 = decimals > 0 ? parseFloat((nowVal - trend * 0.8).toFixed(decimals)) : Math.round(nowVal - trend * 0.8);
+        const p2 = decimals > 0 ? parseFloat((nowVal - trend * 0.5).toFixed(decimals)) : Math.round(nowVal - trend * 0.5);
+        const p3 = decimals > 0 ? parseFloat((nowVal - trend * 0.2).toFixed(decimals)) : Math.round(nowVal - trend * 0.2);
+        const p4 = decimals > 0 ? parseFloat((nowVal - trend * 0.05).toFixed(decimals)) : Math.round(nowVal - trend * 0.05);
+
+        const clamp = (val) => Math.max(minVal, Math.min(maxVal, val));
+        const roundVal = (val) => decimals > 0 ? parseFloat(clamp(val).toFixed(decimals)) : Math.round(clamp(val));
+
+        const actual = [roundVal(p1), roundVal(p2), roundVal(p3), roundVal(p4), roundVal(nowVal), null, null, null];
+        const forecast = [null, null, null, null, roundVal(nowVal), roundVal(fcArr[0]), roundVal(fcArr[1]), roundVal(fcArr[2])];
+        return { actual, forecast, threshold, unit, min: minVal, max: maxVal };
+      };
+
+      const currentNews2 = nf.current_score !== undefined ? nf.current_score : (patient.currentScore || 0);
+      const nfc = nf.forecast || [currentNews2, currentNews2, currentNews2];
+      const nfc1 = nfc[4] !== undefined ? nfc[4] : currentNews2;
+      const nfc2 = nfc[9] !== undefined ? nfc[9] : currentNews2;
+      const nfc3 = nfc[14] !== undefined ? nfc[14] : currentNews2;
+
+      const news2Actual = [
+        Math.max(0, currentNews2 - 2),
+        Math.max(0, currentNews2 - 1),
+        Math.max(0, currentNews2 - 1),
+        currentNews2,
+        currentNews2,
+        null, null, null
+      ];
+      const news2Forecast = [
+        null, null, null, null,
+        currentNews2,
+        nfc1, nfc2, nfc3
+      ];
+
+      return {
+        labels,
+        rr: makeSeries(nowRR, fcRR, 21, 'breaths/min', 10, Math.max(35, nowRR + 6)),
+        spo2: makeSeries(nowSpo2, fcSpo2, 94, '%', Math.min(80, nowSpo2 - 6), 100),
+        sbp: makeSeries(nowSBP, fcSBP, 100, 'mmHg', Math.min(75, nowSBP - 15), Math.max(160, nowSBP + 20)),
+        pulse: makeSeries(nowPulse, fcPulse, 91, 'bpm', Math.min(45, nowPulse - 15), Math.max(140, nowPulse + 20)),
+        temp: makeSeries(nowTemp, fcTemp, 38.1, '°C', 35.5, Math.max(40.0, nowTemp + 1.0), 1),
+        news2: {
+          actual: news2Actual,
+          forecast: news2Forecast,
+          medThreshold: 5,
+          highThreshold: 7,
+          min: 0,
+          max: Math.max(12, currentNews2 + 4)
+        }
+      };
+    }
+
     const labels = ['-24h', '-18h', '-12h', '-6h', 'Now', '+2h', '+4h', '+6h'];
     const vitals = patient.vitals || {
       respiratoryRate: 20, rrStatus: 'stable',
@@ -1575,16 +1807,16 @@ document.addEventListener('DOMContentLoaded', () => {
     patientChartInstances[canvasId] = chart;
   }
 
-  function renderPatientCharts(patient) {
+  function renderPatientCharts(patient, livePred = null) {
     if (typeof Chart === 'undefined') {
       console.warn('Chart.js library is not yet loaded, retrying...');
-      setTimeout(() => renderPatientCharts(patient), 200);
+      setTimeout(() => renderPatientCharts(patient, livePred), 200);
       return;
     }
 
     destroyPatientCharts();
 
-    const data = generatePatientVitalSeries(patient);
+    const data = generatePatientVitalSeries(patient, livePred);
 
     // 1. Respiratory Rate
     createMiniVitalChart('chart-rr', {
@@ -2062,4 +2294,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Initial Route Check on Load
   handleRouteFromHash();
+
+  // Connect to Backend, Supabase & ML Model
+  checkBackendHealth().then(connected => {
+    if (connected) {
+      fetchLivePatients();
+    }
+  });
+
+  // Auto-refresh health and live patients every 20 seconds
+  setInterval(() => {
+    checkBackendHealth().then(connected => {
+      if (connected) fetchLivePatients();
+    });
+  }, 20000);
 });

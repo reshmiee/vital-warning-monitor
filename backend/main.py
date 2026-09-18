@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 from contextlib import asynccontextmanager
 import sys, os
 
@@ -11,6 +11,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from backend.model_loader import load_predictor
 from backend.routes.predict import router as predict_router
+from backend.routes.patients import router as patients_router
+from backend.routes.history import router as history_router
 
 
 @asynccontextmanager
@@ -38,13 +40,16 @@ app.add_middleware(
 )
 
 app.include_router(predict_router)
-
-
-@app.get("/", tags=["Health"])
-async def root():
-    return {"status": "ok", "service": "vital-warning-monitor"}
+app.include_router(patients_router)
+app.include_router(history_router)
 
 
 @app.get("/health", tags=["Health"])
 async def health():
     return {"status": "healthy"}
+
+# Mount frontend as static files so visiting http://127.0.0.1:8000 loads the full UI
+frontend_dir = os.path.join(BASE_DIR, "frontend")
+if os.path.isdir(frontend_dir):
+    from fastapi.staticfiles import StaticFiles
+    app.mount("/", StaticFiles(directory=frontend_dir, html=True), name="frontend")
