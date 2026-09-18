@@ -1268,39 +1268,154 @@
                   <div class="col-alert-details">NEWS2 3 — back in range</div>
                 </div>
 
+                 <!-- ============================================================
+               SLOT 5: ALERTS / HISTORY LOG PAGE
+               ============================================================ -->
+          <div id="alerts-history-view" class="dashboard-subview" style="display: none;">
+            
+            <!-- Page Header -->
+            <div class="alerts-page-header">
+              <div class="alerts-header-left">
+                <h1 class="ward-page-title">Alerts history</h1>
+                <p class="ward-page-subtitle">Chronological record of all flag events in Ward 4B.</p>
+              </div>
+              <div class="alerts-header-right">
+                <p class="alerts-header-context">
+                  This log shows when CareSight flagged patients, any escalations,<br>
+                  and when they later resolved.
+                </p>
               </div>
             </div>
 
-          </div>
+            <!-- Summary Metric Blocks Strip -->
+            <div class="alerts-summary-strip">
+              <div class="alert-stat-card">
+                <span class="stat-card-title">Active flags</span>
+                <span class="stat-card-number" id="alert-stat-active">4</span>
+                <span class="stat-card-sub">Currently unresolved</span>
+              </div>
+              <div class="alert-stat-card">
+                <span class="stat-card-title">Events recorded</span>
+                <span class="stat-card-number" id="alert-stat-total">14</span>
+                <span class="stat-card-sub">Last 7 days</span>
+              </div>
+              <div class="alert-stat-card">
+                <span class="stat-card-title">Early detections</span>
+                <span class="stat-card-number" id="alert-stat-early">8</span>
+                <span class="stat-card-sub">Flagged before threshold crossing</span>
+              </div>
+            </div>
 
-          <!-- Placeholder container for upcoming Alerts History page -->
-          <div id="generic-tab-placeholder" class="dashboard-subview" style="display: none;">
-            <div class="slot-placeholder-center">
-              <div class="illustration-container">
-                <div class="illustration-blob" aria-hidden="true"></div>
-                <div class="illustration-card">
-                  <svg viewBox="0 0 140 100" class="illustration-svg" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="10" y="8" width="120" height="84" rx="8" stroke="#D0DFE8" stroke-width="2" fill="#FFFFFF"/>
-                    <circle cx="30" cy="30" r="10" fill="#216A86" opacity="0.15"/>
-                    <circle cx="30" cy="27" r="4.5" fill="#216A86"/>
-                    <path d="M22 36C22 33 25.5 32 30 32C34.5 32 38 33 38 36" fill="#216A86"/>
-                    <line x1="48" y1="24" x2="86" y2="24" stroke="#8EA4B2" stroke-width="3" stroke-linecap="round"/>
-                    <line x1="48" y1="34" x2="72" y2="34" stroke="#CBD9E2" stroke-width="2.5" stroke-linecap="round"/>
-                    <line x1="20" y1="52" x2="65" y2="52" stroke="#8EA4B2" stroke-width="2.5" stroke-linecap="round"/>
-                    <line x1="20" y1="62" x2="52" y2="62" stroke="#CBD9E2" stroke-width="2.5" stroke-linecap="round"/>
-                    <line x1="20" y1="72" x2="40" y2="72" stroke="#CBD9E2" stroke-width="2" stroke-linecap="round"/>
-                    <rect x="76" y="46" width="46" height="38" rx="4" fill="#F0F6FA" stroke="#D6E4ED" stroke-width="1.2"/>
-                    <polyline points="82,72 94,66 102,70 114,54" stroke="#216A86" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <circle cx="82" cy="72" r="2.5" fill="#216A86"/>
-                    <circle cx="94" cy="66" r="2.5" fill="#216A86"/>
-                    <circle cx="102" cy="70" r="2.5" fill="#216A86"/>
-                    <circle cx="114" cy="54" r="3" fill="#216A86"/>
-                  </svg>
+            <!-- Filter Controls Bar -->
+            <div class="alerts-filter-bar">
+              <div class="alerts-filter-left">
+                <!-- Filter 1: Event Type -->
+                <div class="filter-group">
+                  <label for="filter-event-type" class="filter-label">Event type</label>
+                  <div class="filter-select-wrap">
+                    <select id="filter-event-type" class="filter-select" aria-label="Filter by Event type">
+                      <option value="all">All events</option>
+                      <option value="active">Active only</option>
+                      <option value="flagged">Flagged only</option>
+                      <option value="escalated">Escalated only</option>
+                      <option value="resolved">Resolved only</option>
+                    </select>
+                    <span class="filter-chevron" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Filter 2: Ward -->
+                <div class="filter-group">
+                  <label for="filter-ward" class="filter-label">Ward</label>
+                  <div class="filter-select-wrap">
+                    <select id="filter-ward" class="filter-select" aria-label="Filter by Ward">
+                      <option value="4B">Ward 4B (General Medicine)</option>
+                      <option value="4A">Ward 4A (Cardiology)</option>
+                      <option value="5B">Ward 5B (Respiratory)</option>
+                      <option value="all">All wards</option>
+                    </select>
+                    <span class="filter-chevron" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Filter 3: Date Range -->
+                <div class="filter-group">
+                  <label for="filter-date-range" class="filter-label">Date range</label>
+                  <div class="filter-select-wrap">
+                    <span class="filter-date-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                      </svg>
+                    </span>
+                    <select id="filter-date-range" class="filter-select filter-select-has-icon" aria-label="Filter by Date range">
+                      <option value="7d">Last 7 days</option>
+                      <option value="today">Today</option>
+                      <option value="48h">Last 48 hours</option>
+                      <option value="all">All history</option>
+                    </select>
+                    <span class="filter-chevron" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                    </span>
+                  </div>
                 </div>
               </div>
-              <h2 class="slot-heading" id="slot-heading">Slot Title</h2>
-              <p class="slot-subtitle" id="slot-subtitle">Slot Subtitle</p>
-              <p class="slot-description" id="slot-description">Slot Description</p>
+
+              <!-- Filter Right: Count & Clear -->
+              <div class="alerts-filter-right">
+                <span class="alerts-event-count" id="alerts-event-count">14 events</span>
+                <button type="button" class="alerts-clear-btn" id="alerts-clear-btn">Clear filters</button>
+              </div>
+            </div>
+
+            <!-- Main Log Table Card -->
+            <div class="ward-table-wrapper alerts-table-wrapper" id="alerts-table-wrapper">
+              <div class="alerts-table-header" role="row">
+                <div class="col-alert-dt">Date & time</div>
+                <div class="col-alert-pt">Patient</div>
+                <div class="col-alert-type">Event</div>
+                <div class="col-alert-tier">Risk tier</div>
+                <div class="col-alert-desc">Details</div>
+                <div class="col-alert-lead">Lead time</div>
+                <div class="col-alert-stat">Status</div>
+                <div class="col-alert-chev" aria-hidden="true"></div>
+              </div>
+
+              <!-- Grouped Log Body (Injected by script.js) -->
+              <div class="alerts-table-body" id="alerts-table-body" role="rowgroup">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
+
+            <!-- Bottom Note -->
+            <div class="alerts-end-note" id="alerts-end-note">
+              No more events to show.
+            </div>
+
+            <!-- Empty State (when filters yield 0 events) -->
+            <div class="lookup-state-card alerts-empty-state" id="alerts-empty-state" style="display: none;">
+              <div class="lookup-state-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#216A86" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                  <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                  <line x1="9" y1="12" x2="15" y2="12"></line>
+                  <line x1="9" y1="16" x2="13" y2="16"></line>
+                </svg>
+              </div>
+              <h2 class="lookup-state-title">No alerts recorded yet.</h2>
+              <p class="lookup-state-text">System-generated flags and resolutions will appear here as they occur.</p>
             </div>
           </div>
 

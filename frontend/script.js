@@ -89,8 +89,23 @@ document.addEventListener('DOMContentLoaded', () => {
   const vitalStatusTemp = document.getElementById('vital-status-temp');
   const reportAlertsBody = document.getElementById('report-alerts-body');
 
+  // Alerts History Elements
+  const alertsHistoryView = document.getElementById('alerts-history-view');
+  const alertsTableWrapper = document.getElementById('alerts-table-wrapper');
+  const alertsTableBody = document.getElementById('alerts-table-body');
+  const alertsEmptyState = document.getElementById('alerts-empty-state');
+  const alertsEndNote = document.getElementById('alerts-end-note');
+  const filterEventType = document.getElementById('filter-event-type');
+  const filterWard = document.getElementById('filter-ward');
+  const filterDateRange = document.getElementById('filter-date-range');
+  const alertsEventCount = document.getElementById('alerts-event-count');
+  const alertsClearBtn = document.getElementById('alerts-clear-btn');
+  const alertStatActive = document.getElementById('alert-stat-active');
+  const alertStatTotal = document.getElementById('alert-stat-total');
+  const alertStatEarly = document.getElementById('alert-stat-early');
+
   // State Tracking
-  let lastActiveDashboardTab = 'ward'; // 'ward' | 'surveillance' | 'lookup'
+  let lastActiveDashboardTab = 'ward'; // 'ward' | 'surveillance' | 'lookup' | 'alerts'
   let currentReportPatient = null;
 
   // Shared Mock Patient Dataset (Single Source of Truth across all views)
@@ -477,7 +492,237 @@ document.addEventListener('DOMContentLoaded', () => {
         temperature: 36.7,
         tempStatus: "stable"
       },
-      alerts: []
+    }
+  ];
+
+  // Shared Mock Alert Events Dataset (Chronological Log of Flag Events)
+  const mockAlertEvents = [
+    // 18 Sep 2026 (Today)
+    {
+      id: "EVT-001",
+      dateGroup: "18 Sep 2026 (Today)",
+      dateCategory: "today",
+      time: "14:02",
+      patientId: "P-004B-07",
+      patientName: "Wilson, Margaret",
+      bedNumber: "4B-07",
+      ward: "Ward 4B",
+      eventType: "escalated",
+      eventLabel: "Escalated",
+      tier: "high",
+      details: "NEWS2 9 — RR rising, SpO₂ falling",
+      leadTime: null,
+      status: "active"
+    },
+    {
+      id: "EVT-002",
+      dateGroup: "18 Sep 2026 (Today)",
+      dateCategory: "today",
+      time: "11:47",
+      patientId: "P-004B-12",
+      patientName: "Patel, Rakesh",
+      bedNumber: "4B-12",
+      ward: "Ward 4B",
+      eventType: "flagged",
+      eventLabel: "Flagged",
+      tier: "high",
+      details: "SBP low, rising respiratory rate",
+      leadTime: "42 min early",
+      status: "active"
+    },
+    {
+      id: "EVT-003",
+      dateGroup: "18 Sep 2026 (Today)",
+      dateCategory: "today",
+      time: "10:15",
+      patientId: "P-004B-10",
+      patientName: "Chen, Mei",
+      bedNumber: "4B-10",
+      ward: "Ward 4B",
+      eventType: "flagged",
+      eventLabel: "Flagged",
+      tier: "medium",
+      details: "SpO₂ borderline, temperature rising",
+      leadTime: "28 min early",
+      status: "active"
+    },
+    {
+      id: "EVT-004",
+      dateGroup: "18 Sep 2026 (Today)",
+      dateCategory: "today",
+      time: "08:32",
+      patientId: "P-004B-11",
+      patientName: "Martin, Oliver",
+      bedNumber: "4B-11",
+      ward: "Ward 4B",
+      eventType: "resolved",
+      eventLabel: "Resolved",
+      tier: "low",
+      details: "Heart rate back in range",
+      leadTime: null,
+      status: "resolved"
+    },
+    {
+      id: "EVT-005",
+      dateGroup: "18 Sep 2026 (Today)",
+      dateCategory: "today",
+      time: "06:18",
+      patientId: "P-004B-03",
+      patientName: "O'Connor, Liam",
+      bedNumber: "4B-03",
+      ward: "Ward 4B",
+      eventType: "flagged",
+      eventLabel: "Flagged",
+      tier: "medium",
+      details: "Increasing respiratory rate",
+      leadTime: "35 min early",
+      status: "active"
+    },
+    // 17 Sep 2026
+    {
+      id: "EVT-006",
+      dateGroup: "17 Sep 2026",
+      dateCategory: "48h",
+      time: "22:41",
+      patientId: "P-004B-09",
+      patientName: "Hughes, Daniel",
+      bedNumber: "4B-09",
+      ward: "Ward 4B",
+      eventType: "resolved",
+      eventLabel: "Resolved",
+      tier: "low",
+      details: "Temperature back in range",
+      leadTime: null,
+      status: "resolved"
+    },
+    {
+      id: "EVT-007",
+      dateGroup: "17 Sep 2026",
+      dateCategory: "48h",
+      time: "19:26",
+      patientId: "P-004B-05",
+      patientName: "Khan, Aisha",
+      bedNumber: "4B-05",
+      ward: "Ward 4B",
+      eventType: "flagged",
+      eventLabel: "Flagged",
+      tier: "medium",
+      details: "RR elevated, SpO₂ borderline",
+      leadTime: "31 min early",
+      status: "resolved"
+    },
+    {
+      id: "EVT-008",
+      dateGroup: "17 Sep 2026",
+      dateCategory: "48h",
+      time: "15:10",
+      patientId: "P-004B-06",
+      patientName: "Roberts, James",
+      bedNumber: "4B-06",
+      ward: "Ward 4B",
+      eventType: "resolved",
+      eventLabel: "Resolved",
+      tier: "low",
+      details: "All vitals in range",
+      leadTime: null,
+      status: "resolved"
+    },
+    {
+      id: "EVT-009",
+      dateGroup: "17 Sep 2026",
+      dateCategory: "48h",
+      time: "11:03",
+      patientId: "P-004B-04",
+      patientName: "Taylor, Emma",
+      bedNumber: "4B-04",
+      ward: "Ward 4B",
+      eventType: "flagged",
+      eventLabel: "Flagged",
+      tier: "medium",
+      details: "Temperature rising",
+      leadTime: "26 min early",
+      status: "resolved"
+    },
+    {
+      id: "EVT-010",
+      dateGroup: "17 Sep 2026",
+      dateCategory: "48h",
+      time: "08:55",
+      patientId: "P-004B-13",
+      patientName: "Singh, Arjun",
+      bedNumber: "4B-13",
+      ward: "Ward 4B",
+      eventType: "resolved",
+      eventLabel: "Resolved",
+      tier: "low",
+      details: "Observations stable",
+      leadTime: null,
+      status: "resolved"
+    },
+    // 16 Sep 2026
+    {
+      id: "EVT-011",
+      dateGroup: "16 Sep 2026",
+      dateCategory: "7d",
+      time: "21:14",
+      patientId: "P-004B-14",
+      patientName: "Clark, Sophie",
+      bedNumber: "4B-14",
+      ward: "Ward 4B",
+      eventType: "flagged",
+      eventLabel: "Flagged",
+      tier: "high",
+      details: "RR rising, low SpO₂",
+      leadTime: "50 min early",
+      status: "resolved"
+    },
+    {
+      id: "EVT-012",
+      dateGroup: "16 Sep 2026",
+      dateCategory: "7d",
+      time: "17:36",
+      patientId: "P-004B-02",
+      patientName: "Nguyen, Linh",
+      bedNumber: "4B-02",
+      ward: "Ward 4B",
+      eventType: "flagged",
+      eventLabel: "Flagged",
+      tier: "medium",
+      details: "Systolic BP low, HR elevated",
+      leadTime: "22 min early",
+      status: "resolved"
+    },
+    {
+      id: "EVT-013",
+      dateGroup: "16 Sep 2026",
+      dateCategory: "7d",
+      time: "13:12",
+      patientId: "P-004B-08",
+      patientName: "Brown, Thomas",
+      bedNumber: "4B-08",
+      ward: "Ward 4B",
+      eventType: "resolved",
+      eventLabel: "Resolved",
+      tier: "low",
+      details: "All vitals in range",
+      leadTime: null,
+      status: "resolved"
+    },
+    {
+      id: "EVT-014",
+      dateGroup: "16 Sep 2026",
+      dateCategory: "7d",
+      time: "09:27",
+      patientId: "P-004B-01",
+      patientName: "Ahmed, Sara",
+      bedNumber: "4B-01",
+      ward: "Ward 4B",
+      eventType: "flagged",
+      eventLabel: "Flagged",
+      tier: "medium",
+      details: "Mildly low BP, increasing RR",
+      leadTime: "27 min early",
+      status: "resolved"
     }
   ];
 
@@ -779,6 +1024,8 @@ document.addEventListener('DOMContentLoaded', () => {
         reportBackBtn.textContent = '← Back to high surveillance';
       } else if (fromTab === 'lookup') {
         reportBackBtn.textContent = '← Back to search';
+      } else if (fromTab === 'alerts') {
+        reportBackBtn.textContent = '← Back to alerts history';
       } else {
         reportBackBtn.textContent = '← Back to ward overview';
       }
@@ -905,6 +1152,175 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  /* ==========================================================================
+     PART C: ALERTS / HISTORY LOG ENGINE
+     ========================================================================== */
+  function renderAlertsLog() {
+    if (!alertsTableBody) return;
+
+    const eventType = filterEventType ? filterEventType.value : 'all';
+    const ward = filterWard ? filterWard.value : '4B';
+    const dateRange = filterDateRange ? filterDateRange.value : '7d';
+
+    let filtered = mockAlertEvents.filter(evt => {
+      // Event Type filter
+      if (eventType === 'active' && evt.status !== 'active') return false;
+      if (eventType === 'flagged' && evt.eventType !== 'flagged') return false;
+      if (eventType === 'escalated' && evt.eventType !== 'escalated') return false;
+      if (eventType === 'resolved' && evt.eventType !== 'resolved') return false;
+
+      // Ward filter
+      if (ward !== 'all' && !evt.ward.includes(ward)) return false;
+
+      // Date Range filter
+      if (dateRange === 'today' && evt.dateCategory !== 'today') return false;
+      if (dateRange === '48h' && evt.dateCategory !== 'today' && evt.dateCategory !== '48h') return false;
+
+      return true;
+    });
+
+    // Update Counts & Summary Blocks
+    if (alertsEventCount) {
+      alertsEventCount.textContent = `${filtered.length} event${filtered.length === 1 ? '' : 's'}`;
+    }
+
+    if (alertStatTotal) alertStatTotal.textContent = filtered.length;
+    if (alertStatActive) alertStatActive.textContent = filtered.filter(e => e.status === 'active').length;
+    if (alertStatEarly) alertStatEarly.textContent = filtered.filter(e => e.leadTime).length;
+
+    // Handle Empty State
+    if (filtered.length === 0) {
+      if (alertsTableWrapper) alertsTableWrapper.style.display = 'none';
+      if (alertsEndNote) alertsEndNote.style.display = 'none';
+      if (alertsEmptyState) alertsEmptyState.style.display = 'flex';
+      alertsTableBody.innerHTML = '';
+      return;
+    }
+
+    if (alertsTableWrapper) alertsTableWrapper.style.display = 'block';
+    if (alertsEndNote) alertsEndNote.style.display = 'block';
+    if (alertsEmptyState) alertsEmptyState.style.display = 'none';
+
+    // Group filtered events by dateGroup
+    const groups = {};
+    filtered.forEach(evt => {
+      if (!groups[evt.dateGroup]) {
+        groups[evt.dateGroup] = [];
+      }
+      groups[evt.dateGroup].push(evt);
+    });
+
+    let html = '';
+    Object.keys(groups).forEach(dateHeader => {
+      html += `<div class="alerts-date-group-header" role="rowgroup">${dateHeader}</div>`;
+
+      groups[dateHeader].forEach(evt => {
+        let eventIconHtml = '';
+        if (evt.eventType === 'escalated') {
+          eventIconHtml = `
+            <span class="event-icon-flag-high" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <path d="M4 2v20M4 4h14l-2.5 5 2.5 5H4"/>
+              </svg>
+            </span>
+          `;
+        } else if (evt.eventType === 'flagged') {
+          const isHigh = evt.tier === 'high';
+          eventIconHtml = `
+            <span class="${isHigh ? 'event-icon-flag-high' : 'event-icon-flag-med'}" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <path d="M4 2v20M4 4h14l-2.5 5 2.5 5H4"/>
+              </svg>
+            </span>
+          `;
+        } else {
+          eventIconHtml = `
+            <span class="event-icon-check" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#159A72" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10" fill="#DCFCE7" stroke="none"></circle>
+                <polyline points="9 12 11 14 15 10"></polyline>
+              </svg>
+            </span>
+          `;
+        }
+
+        const tierCapitalized = evt.tier.charAt(0).toUpperCase() + evt.tier.slice(1);
+        const statusCapitalized = evt.status === 'active' ? 'Active' : 'Resolved';
+
+        const leadTimeHtml = evt.leadTime 
+          ? `<span class="lead-time-val">${evt.leadTime}</span>`
+          : `<span class="lead-time-empty">-</span>`;
+
+        html += `
+          <div class="alert-log-row" data-bed="${evt.bedNumber}" data-patient="${evt.patientName}" role="row" tabindex="0">
+            <div class="col-alert-dt" role="cell">${evt.time}</div>
+            <div class="col-alert-pt" role="cell">
+              <span class="col-alert-pt-name">${evt.patientName}</span>
+              <span class="col-alert-pt-bed">Bed ${evt.bedNumber}</span>
+            </div>
+            <div class="col-alert-type" role="cell">
+              ${eventIconHtml}
+              <span>${evt.eventLabel}</span>
+            </div>
+            <div class="col-alert-tier" role="cell">
+              <span class="tier-pill tier-pill-${evt.tier}">${tierCapitalized}</span>
+            </div>
+            <div class="col-alert-desc" role="cell">${evt.details}</div>
+            <div class="col-alert-lead" role="cell">${leadTimeHtml}</div>
+            <div class="col-alert-stat" role="cell">
+              <span class="status-pill status-pill-${evt.status}">${statusCapitalized}</span>
+            </div>
+            <div class="col-alert-chev" role="cell" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </div>
+          </div>
+        `;
+      });
+    });
+
+    alertsTableBody.innerHTML = html;
+
+    // Attach row click listeners -> Navigate to patient full report
+    const rows = alertsTableBody.querySelectorAll('.alert-log-row');
+    rows.forEach(row => {
+      row.addEventListener('click', () => {
+        const bed = row.getAttribute('data-bed');
+        openPatientReport(bed, 'alerts');
+      });
+
+      row.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          row.click();
+        }
+      });
+    });
+  }
+
+  // Filter Event Listeners
+  if (filterEventType) {
+    filterEventType.addEventListener('change', renderAlertsLog);
+  }
+
+  if (filterWard) {
+    filterWard.addEventListener('change', renderAlertsLog);
+  }
+
+  if (filterDateRange) {
+    filterDateRange.addEventListener('change', renderAlertsLog);
+  }
+
+  if (alertsClearBtn) {
+    alertsClearBtn.addEventListener('click', () => {
+      if (filterEventType) filterEventType.value = 'all';
+      if (filterWard) filterWard.value = '4B';
+      if (filterDateRange) filterDateRange.value = '7d';
+      renderAlertsLog();
+    });
+  }
+
   /**
    * Router: Switch between top-level views
    * @param {string} viewName - 'landing' | 'login' | 'dashboard'
@@ -970,7 +1386,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (highSurveillanceView) highSurveillanceView.style.display = 'none';
     if (patientLookupView) patientLookupView.style.display = 'none';
     if (patientReportView) patientReportView.style.display = 'none';
-    if (genericTabPlaceholder) genericTabPlaceholder.style.display = 'none';
+    if (alertsHistoryView) alertsHistoryView.style.display = 'none';
 
     if (isPatientReport) {
       if (patientReportView) patientReportView.style.display = 'block';
@@ -988,15 +1404,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (lookupPatientInput) {
         setTimeout(() => lookupPatientInput.focus(), 80);
       }
-    } else {
-      // Future tabs (e.g. alerts history)
-      if (genericTabPlaceholder) {
-        genericTabPlaceholder.style.display = 'block';
-        const data = navContentMap[targetKey] || navContentMap.ward;
-        if (slotHeading) slotHeading.textContent = data.heading;
-        if (slotSubtitle) slotSubtitle.textContent = data.subtitle;
-        if (slotDescription) slotDescription.textContent = data.description;
-      }
+    } else if (targetKey === 'alerts') {
+      lastActiveDashboardTab = 'alerts';
+      if (alertsHistoryView) alertsHistoryView.style.display = 'block';
+      renderAlertsLog();
     }
   }
 
