@@ -1217,7 +1217,7 @@ p {
   border-bottom: 1px solid #D6E0E8;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   padding: 0 36px;
   gap: 24px;
   position: sticky;
@@ -1317,6 +1317,7 @@ p {
 
 /* Right Admin Profile & Logout */
 .topbar-actions {
+  margin-left: auto;
   display: flex;
   align-items: center;
   gap: 18px;
@@ -1405,14 +1406,14 @@ p {
 
 .dashboard-main-panel {
   flex: 1;
-  background-color: #FFFFFF;
-  border: 1px solid #D6E0E8;
+  background-color: transparent;
+  border: none;
   border-radius: var(--radius-lg);
-  padding: 40px 44px;
+  padding:  24px 0px;
   display: flex;
   flex-direction: column;
   min-height: calc(100vh - 140px);
-  box-shadow: 0 4px 20px rgba(11, 31, 65, 0.02);
+  box-shadow: none;
 }
 
 .dashboard-subview {
@@ -1428,12 +1429,12 @@ p {
    WARD OVERVIEW PAGE STYLES
    ========================================================================== */
 .ward-page-header {
-  margin-bottom: 24px;
+  margin-bottom:  16px;
 }
 
 .ward-page-title {
   font-family: var(--font-serif);
-  font-size: 3rem;
+  font-size:  2.25rem;
   font-weight: 600;
   color: var(--color-primary-text);
   letter-spacing: -0.4px;
@@ -1825,7 +1826,11 @@ p {
   border: 1px solid #E2EBF2;
   border-radius: var(--radius-md);
   padding: 26px 30px;
-  margin-bottom: 26px;
+  margin-bottom:  26px;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 40px;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -2006,7 +2011,10 @@ p {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-top: 10px;
+  margin-top:  10px;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
   box-shadow: 0 1px 3px rgba(11, 31, 65, 0.02);
 }
 
@@ -3129,6 +3137,7 @@ p {
   }
 
   .topbar-actions {
+  margin-left: auto;
     gap: 10px;
   }
 
@@ -3268,3 +3277,9 @@ p {
 }
 
 .hero-headline .highlight-blue { color: #38BDF8; }
+
+#lookup-results-section { max-width: 700px; margin: 0 auto; }
+#patient-lookup-view .ward-page-header { text-align: center; margin-bottom: 32px; }
+
+.topbar-ward-context { padding: 8px 12px; margin-left: -12px; border-radius: var(--radius-md); transition: background-color 0.2s, cursor 0.2s; }
+.topbar-ward-context:hover { background-color: #E2EBF2; cursor: pointer; }
