@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CareSight — Patient Deterioration Forecasting & Trajectory Monitoring</title>
+  <meta name="description" content="CareSight forecasts patient vitals and scores trajectories against clinical NEWS2 rules to catch deterioration before it happens.">
+  
+  <!-- Google Fonts: Newsreader (editorial serif) & Public Sans (clean sans-serif) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,500;1,6..72,600&family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ============================================================
+       VIEW 1: LANDING PAGE (PUBLIC)
+       ============================================================ -->
+  <div id="landing-page" class="page-view active">
+    
+    <!-- Navigation Bar -->
+    <header class="navbar">
+      <div class="nav-container">
+        <div class="brand-group">
+          <!-- Pulse / ECG Icon -->
+          <svg class="brand-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M3 16H8L11 9L15 23L19 12L22 18L24 16H29" stroke="#1765D1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="brand-title">CareSight</span>
+          <span class="brand-tagline">Earlier insight. Safer care.</span>
+        </div>
+        
+        <div class="nav-actions">
+          <button type="button" class="btn btn-primary nav-login-btn" id="nav-login-btn">
+            Admin login
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main>
+      <!-- Hero Section -->
+      <section class="hero-section">
+        <div class="hero-container">
+          <!-- Left Column -->
+          <div class="hero-content">
+            <div class="hero-eyebrow">PREDICT &nbsp; MONITOR &nbsp; PREVENT</div>
+            <h1 class="hero-headline">
+              Catch patient deterioration <span class="highlight-blue">before</span> it happens, not after.
+            </h1>
+            <p class="hero-description">
+              CareSight forecasts the next set of patient vitals, scores them against clinical NEWS2 rules, and flags patients who are trending toward deterioration — giving clinical teams earlier time to act.
+            </p>
+            <div class="hero-cta-wrap">
+              <button type="button" class="btn btn-primary btn-large hero-cta-btn" id="hero-login-btn">
+                Admin login <span class="btn-arrow" aria-hidden="true">→</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Right Visual Column -->
+          <div class="hero-visual">
+            <div class="hero-image-wrapper">
+              <!-- Poetic clinical overlay quote from reference design -->
+              <div class="hero-quote-overlay">
+                <span class="quote-italic">Earlier<br>insight.<br>Brighter<br>tomorrows.</span>
+                <div class="quote-accent-bar" aria-hidden="true"></div>
+              </div>
+              
+              <!-- Realistic Clinician & Patient Monitor Image -->
+              <img 
+                src="assets/images/hero-clinician.jpg" 
+                alt="Clinician monitoring bedside vitals display in a calm, modern hospital care setting"
+                class="hero-img"
+                id="hero-clinician-image"
+                onerror="this.style.display='none'; document.getElementById('hero-fallback-visual').style.display='flex';"
+              >
+
+              <!-- High-fidelity CSS/SVG Fallback if image is pending user replacement -->
+              <div id="hero-fallback-visual" class="hero-fallback-visual" style="display: none;">
+                <div class="fallback-monitor">
+                  <div class="monitor-header">
+                    <span class="monitor-dot"></span> BED 04 — CONTINUOUS TELEMETRY
+                  </div>
+                  <div class="monitor-row">
+                    <div class="vital-spark">
+                      <svg viewBox="0 0 160 40" class="spark-line">
+                        <path d="M0,20 L30,20 L35,5 L42,35 L48,15 L52,22 L56,20 L160,20" fill="none" stroke="#10B981" stroke-width="2"/>
+                      </svg>
+                      <span class="vital-label">HR / ECG</span>
+                    </div>
+                    <span class="vital-val val-green">76 <small>bpm</small></span>
+                  </div>
+                  <div class="monitor-row">
+                    <div class="vital-spark">
+                      <svg viewBox="0 0 160 40" class="spark-line">
+                        <path d="M0,20 Q40,5 80,20 T160,20" fill="none" stroke="#0EA5E9" stroke-width="2"/>
+                      </svg>
+                      <span class="vital-label">SpO₂ Pleth</span>
+                    </div>
+                    <span class="vital-val val-blue">98 <small>%</small></span>
+                  </div>
+                  <div class="monitor-row">
+                    <span class="vital-label">NIBP Systolic/Dia</span>
+                    <span class="vital-val val-amber">118/76</span>
+                  </div>
+                  <div class="monitor-row">
+                    <span class="vital-label">Resp Rate</span>
+                    <span class="vital-val val-cyan">16 <small>/min</small></span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Soft edge gradient mask for seamless blending -->
+              <div class="hero-blend-gradient" aria-hidden="true"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- How It Works Section -->
+      <section class="how-it-works-section">
+        <div class="section-container">
+          <div class="section-header-center">
+            <h2 class="section-title">How it works</h2>
+            <p class="section-subtitle">A simple idea. A big difference.</p>
+          </div>
+
+          <!-- Flow Cards with connecting arrows -->
+          <div class="workflow-grid">
+            
+            <!-- Card 1: Vitals stream in -->
+            <div class="workflow-card">
+              <div class="card-icon-container">
+                <!-- Monitor Waveform SVG Icon -->
+                <svg viewBox="0 0 100 80" class="workflow-svg-icon" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <!-- Monitor frame -->
+                  <rect x="10" y="8" width="80" height="52" rx="6" stroke="#2563EB" stroke-width="2.2" fill="#F8FAFC"/>
+                  <line x1="28" y1="60" x2="72" y2="60" stroke="#2563EB" stroke-width="2.2"/>
+                  <line x1="50" y1="60" x2="50" y2="70" stroke="#2563EB" stroke-width="2.5"/>
+                  <line x1="38" y1="70" x2="62" y2="70" stroke="#2563EB" stroke-width="2.5" stroke-linecap="round"/>
+                  <!-- Waveform -->
+                  <path d="M18 36H32L38 22L45 46L52 28L58 39L64 36H82" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div class="card-body">
+                <div class="card-title-row">
+                  <div class="step-badge">1</div>
+                  <h3 class="card-title">Vitals stream in</h3>
+                </div>
+                <p class="card-description">
+                  We use a continuous stream of patient vitals, turned into minute-by-minute snapshots.
+                </p>
+              </div>
+            </div>
+
+            <!-- Inter-card arrow 1 -->
+            <div class="workflow-connector" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#1765D1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </div>
+
+            <!-- Card 2: Forecast the next reading -->
+            <div class="workflow-card">
+              <div class="card-icon-container">
+                <!-- Trend Chart SVG Icon -->
+                <svg viewBox="0 0 100 80" class="workflow-svg-icon" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <!-- Trend line with dots -->
+                  <path d="M16 54L34 40L50 46L76 22" stroke="#2563EB" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                  <!-- Dashed forecast extension -->
+                  <path d="M76 22L86 14" stroke="#2563EB" stroke-width="2.4" stroke-dasharray="3 3" stroke-linecap="round"/>
+                  <!-- Arrow tip -->
+                  <path d="M78 13H86V21" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <!-- Nodes -->
+                  <circle cx="16" cy="54" r="3.5" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+                  <circle cx="34" cy="40" r="3.5" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+                  <circle cx="50" cy="46" r="3.5" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+                  <circle cx="76" cy="22" r="3.5" fill="#FFFFFF" stroke="#2563EB" stroke-width="2"/>
+                </svg>
+              </div>
+              <div class="card-body">
+                <div class="card-title-row">
+                  <div class="step-badge">2</div>
+                  <h3 class="card-title">Forecast the next reading</h3>
+                </div>
+                <p class="card-description">
+                  We predict the next set of vitals using time-series and machine learning models.
+                </p>
+              </div>
+            </div>
+
+            <!-- Inter-card arrow 2 -->
+            <div class="workflow-connector" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#1765D1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </div>
+
+            <!-- Card 3: Score it and flag early -->
+            <div class="workflow-card">
+              <div class="card-icon-container">
+                <!-- NEWS2 Checklist SVG Icon -->
+                <svg viewBox="0 0 100 80" class="workflow-svg-icon" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <!-- Document Sheet -->
+                  <rect x="26" y="8" width="48" height="60" rx="6" stroke="#2563EB" stroke-width="2.2" fill="#F8FAFC"/>
+                  <!-- Header NEWS2 text -->
+                  <text x="50" y="22" font-family="'Public Sans', sans-serif" font-size="8" font-weight="700" fill="#0B1F41" text-anchor="middle">NEWS2</text>
+                  <!-- Checklist rows -->
+                  <circle cx="34" cy="30" r="2" fill="#2563EB"/>
+                  <line x1="41" y1="30" x2="64" y2="30" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"/>
+                  
+                  <circle cx="34" cy="38" r="2" fill="#2563EB"/>
+                  <line x1="41" y1="38" x2="64" y2="38" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"/>
+                  
+                  <circle cx="34" cy="46" r="2" fill="#2563EB"/>
+                  <line x1="41" y1="46" x2="64" y2="46" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"/>
+
+                  <!-- Validated Checkmark Circle -->
+                  <circle cx="68" cy="58" r="9" fill="#10B981"/>
+                  <path d="M64 58L67 61L72 55" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div class="card-body">
+                <div class="card-title-row">
+                  <div class="step-badge">3</div>
+                  <h3 class="card-title">Score it and flag early</h3>
+                </div>
+                <p class="card-description">
+                  We score the forecasted vitals against NEWS2 clinical rules and flag patients before thresholds are crossed.
+                </p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- Why It Matters Section -->
+      <section class="why-it-matters-section">
+        <div class="section-container">
+          <div class="why-grid">
+            
+            <!-- Left Content Column -->
+            <div class="why-content">
+              <div class="why-eyebrow">WHY IT MATTERS</div>
+              <h2 class="why-headline">
+                A single snapshot shows severity, not direction.
+              </h2>
+              <p class="why-description">
+                Two patients can have the same current NEWS2 score while one is improving and the other is getting worse. By looking at the trajectory — not just the snapshot — CareSight helps clinical teams spot deterioration earlier, so they can act sooner.
+              </p>
+              <div class="why-highlight-statement">
+                <span class="statement-text">Same score. Different stories.</span>
+                <div class="statement-underline" aria-hidden="true"></div>
+              </div>
+            </div>
+
+            <!-- Right Visual / Conceptual Chart Card -->
+            <div class="why-visual">
+              <div class="trajectory-chart-card">
+                <h4 class="chart-card-title">Two patients. Same current score. Different trajectories.</h4>
+                
+                <!-- Precision SVG Trajectory Graph -->
+                <div class="chart-svg-wrapper">
+                  <svg viewBox="0 0 460 260" class="trajectory-svg" aria-label="Conceptual chart showing Patient A rising in risk and Patient B falling in risk starting from the same score of 4">
+                    <defs>
+                      <!-- Patient A Area Gradient -->
+                      <linearGradient id="patientAGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#1765D1" stop-opacity="0.14"/>
+                        <stop offset="100%" stop-color="#1765D1" stop-opacity="0.0"/>
+                      </linearGradient>
+                    </defs>
+
+                    <!-- Axis lines -->
+                    <!-- Y Axis -->
+                    <line x1="70" y1="20" x2="70" y2="210" stroke="#CBD5E1" stroke-width="1.5"/>
+                    <!-- X Axis -->
+                    <line x1="70" y1="210" x2="350" y2="210" stroke="#CBD5E1" stroke-width="1.5"/>
+                    
+                    <!-- Y Axis Ticks and Labels -->
+                    <!-- 10 -->
+                    <line x1="65" y1="35" x2="70" y2="35" stroke="#94A3B8" stroke-width="1.5"/>
+                    <text x="58" y="39" class="axis-tick" text-anchor="end">10</text>
+                    
+                    <!-- 5 -->
+                    <line x1="65" y1="120" x2="70" y2="120" stroke="#94A3B8" stroke-width="1.5"/>
+                    <text x="58" y="124" class="axis-tick" text-anchor="end">5</text>
+                    
+                    <!-- 0 -->
+                    <line x1="65" y1="210" x2="70" y2="210" stroke="#94A3B8" stroke-width="1.5"/>
+                    <text x="58" y="214" class="axis-tick" text-anchor="end">0</text>
+
+                    <!-- Y Axis Title -->
+                    <text x="36" y="112" class="axis-title" text-anchor="middle" font-weight="600">NEWS2</text>
+                    <text x="36" y="128" class="axis-title" text-anchor="middle">score</text>
+
+                    <!-- X Axis Label -->
+                    <text x="210" y="235" class="axis-label" text-anchor="middle">Time →</text>
+
+                    <!-- Starting Score baseline marker at Score 4 (y=138) -->
+                    <circle cx="70" cy="138" r="3.5" fill="#64748B"/>
+
+                    <!-- Patient A Shaded Forecast Area -->
+                    <polygon points="70,138 310,65 310,210 70,210" fill="url(#patientAGradient)" />
+
+                    <!-- Patient A Trajectory (Ascending Blue Dashed Line) -->
+                    <line x1="70" y1="138" x2="310" y2="65" stroke="#1765D1" stroke-width="2.5" stroke-dasharray="5 4" stroke-linecap="round"/>
+                    <circle cx="310" cy="65" r="5" fill="#1765D1"/>
+
+                    <!-- Patient A Label Annotation -->
+                    <g transform="translate(324, 46)">
+                      <text x="0" y="14" class="label-patient label-patient-a" font-weight="700">Patient A</text>
+                      <text x="0" y="28" class="label-sub">(score 4 now)</text>
+                      <text x="0" y="42" class="label-trend">Trending up</text>
+                      <text x="0" y="56" class="label-outcome danger">→ higher risk</text>
+                    </g>
+
+                    <!-- Patient B Trajectory (Descending Green Dashed Line) -->
+                    <line x1="70" y1="138" x2="310" y2="195" stroke="#10B981" stroke-width="2.5" stroke-dasharray="5 4" stroke-linecap="round"/>
+                    <circle cx="310" cy="195" r="5" fill="#10B981"/>
+
+                    <!-- Patient B Label Annotation -->
+                    <g transform="translate(324, 175)">
+                      <text x="0" y="14" class="label-patient label-patient-b" font-weight="700">Patient B</text>
+                      <text x="0" y="28" class="label-sub">(score 4 now)</text>
+                      <text x="0" y="42" class="label-trend">Trending down</text>
+                      <text x="0" y="56" class="label-outcome safe">→ lower risk</text>
+                    </g>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="landing-footer">
+      <div class="footer-container">
+        <!-- Left: Brand -->
+        <div class="footer-brand">
+          <svg class="footer-brand-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M3 16H8L11 9L15 23L19 12L22 18L24 16H29" stroke="#1765D1" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="footer-brand-title">CareSight</span>
+          <span class="footer-brand-tagline">Earlier insight. Safer care.</span>
+        </div>
+
+        <!-- Center: Prototype Disclaimer -->
+        <div class="footer-center">
+          <p class="footer-disclaimer">
+            This is a prototype / demo system. It is not a certified clinical tool and should not be used for real patient care.
+          </p>
+        </div>
+
+        <!-- Right: Closing statement -->
+        <div class="footer-right">
+          <p class="footer-closing">A safer tomorrow starts with earlier insight.</p>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- ============================================================
+       MOCK LOGIN MODAL / VIEW (Seamless transition when clicking Admin login)
+       ============================================================ -->
+  <div id="login-modal" class="modal-backdrop" style="display: none;">
+    <div class="modal-card">
+      <button type="button" class="modal-close-btn" id="modal-close-btn" aria-label="Close login dialog">×</button>
+      <div class="modal-header">
+        <svg class="brand-icon modal-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 16H8L11 9L15 23L19 12L22 18L24 16H29" stroke="#1765D1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <h3 class="modal-title">CareSight Clinical Portal</h3>
+        <p class="modal-subtitle">Mock gate — Enter demo credentials or proceed directly</p>
+      </div>
+
+      <form id="mock-login-form" class="login-form">
+        <div class="form-group">
+          <label for="username-input" class="form-label">Clinician Username / ID</label>
+          <input type="text" id="username-input" class="form-input" value="dr.sarah.connor" placeholder="Enter ID or demo">
+        </div>
+        <div class="form-group">
+          <label for="password-input" class="form-label">Password</label>
+          <input type="password" id="password-input" class="form-input" value="••••••••" placeholder="Password">
+        </div>
+        
+        <div class="form-tip">
+          <span class="tip-badge">DEMO GATE</span> Any credentials pass through.
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block" id="submit-login-btn">
+          Enter Clinical Dashboard →
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Main JavaScript File -->
+  <script src="script.js"></script>
+</body>
+</html>
