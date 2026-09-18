@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CareSight — Design System & Landing Page Stylesheet
+   Aarogya — Design System & Landing Page Stylesheet
    Typography: Newsreader (Headings / Editorial) & Public Sans (Body / UI)
    Palette: Deep Navy (#0B1F41), Clinical Blue (#1765D1), Off-white (#F8FAFC), Pale Blue (#EFF6FC)
    ========================================================================== */
@@ -189,8 +189,11 @@ p {
 
 /* --- Hero Section --- */
 .hero-section {
-  padding: 60px 0 80px;
-  background-color: var(--color-bg-main);
+  padding: 100px 0 120px;
+  background-color: var(--color-primary-text);
+  background-image: linear-gradient(to right, rgba(11, 31, 65, 0.75) 0%, rgba(11, 31, 65, 0.1) 100%), url('assets/images/hero-bg.png');
+  background-size: cover;
+  background-position: center;
   position: relative;
   overflow: hidden;
 }
@@ -199,10 +202,6 @@ p {
   max-width: 1320px;
   margin: 0 auto;
   padding: 0 32px;
-  display: grid;
-  grid-template-columns: 1.15fr 1fr;
-  gap: 48px;
-  align-items: center;
 }
 
 .hero-content {
@@ -213,7 +212,7 @@ p {
   font-size: 0.875rem;
   font-weight: 700;
   letter-spacing: 3.5px;
-  color: var(--color-primary-text);
+  color: var(--color-accent-blue);
   margin-bottom: 8px;
   text-transform: uppercase;
 }
@@ -224,16 +223,16 @@ p {
   font-weight: 600;
   line-height: 1.14;
   letter-spacing: -0.8px;
-  color: var(--color-primary-text);
+  color: #FFFFFF;
   margin-bottom: 24px;
 }
 
 .hero-description {
   font-size: 1.125rem;
   line-height: 1.65;
-  color: var(--color-text-muted);
+  color: var(--color-bg-secondary);
   margin-bottom: 36px;
-  max-width: 530px;
+  max-width: 600px;
 }
 
 .hero-cta-wrap {
@@ -2912,8 +2911,14 @@ p {
 /* --- Responsive Media Queries --- */
 @media (max-width: 1100px) {
   .hero-headline {
-    font-size: 3rem;
-  }
+  font-family: var(--font-serif);
+  font-size: 3.5rem;
+  font-weight: 600;
+  line-height: 1.14;
+  letter-spacing: -0.8px;
+  color: #FFFFFF;
+  margin-bottom: 24px;
+}
   
   .hero-image-wrapper {
     height: 420px;
@@ -2926,9 +2931,10 @@ p {
 
 @media (max-width: 900px) {
   .hero-container {
-    grid-template-columns: 1fr;
-    gap: 40px;
-  }
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
 
   .hero-content {
     max-width: 100%;
@@ -2999,16 +3005,32 @@ p {
   }
 
   .hero-section {
-    padding: 40px 0 60px;
-  }
+  padding: 100px 0 120px;
+  background-color: var(--color-primary-text);
+  background-image: linear-gradient(to right, rgba(11, 31, 65, 0.75) 0%, rgba(11, 31, 65, 0.1) 100%), url('assets/images/hero-bg.png');
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  overflow: hidden;
+}
 
   .hero-headline {
-    font-size: 3rem;
-  }
+  font-family: var(--font-serif);
+  font-size: 3.5rem;
+  font-weight: 600;
+  line-height: 1.14;
+  letter-spacing: -0.8px;
+  color: #FFFFFF;
+  margin-bottom: 24px;
+}
 
   .hero-description {
-    font-size: 1rem;
-  }
+  font-size: 1.125rem;
+  line-height: 1.65;
+  color: var(--color-bg-secondary);
+  margin-bottom: 36px;
+  max-width: 600px;
+}
 
   .section-title {
     font-size: 3rem;
@@ -3244,3 +3266,5 @@ p {
   background-color: rgba(0,0,0,0.05);
   box-shadow: none;
 }
+
+.hero-headline .highlight-blue { color: #38BDF8; }
