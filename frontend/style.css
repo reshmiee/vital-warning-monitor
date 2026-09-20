@@ -3450,3 +3450,853 @@ p {
 
 .topbar-ward-context { padding: 8px 12px; margin-left: -12px; border-radius: var(--radius-md); transition: background-color 0.2s, cursor 0.2s; }
 .topbar-ward-context:hover { background-color: #E2EBF2; cursor: pointer; }
+
+/* ==========================================================================
+   DOZEE-STYLE CLINICAL ICU TELEMETRY MONITOR DESIGN SYSTEM
+   Matching Reference Images: Slim Royal Navy Rail, Stacked Telemetry Curves,
+   Shaded Risk Bands (Green / Yellow / Red), Synchronized Metrics & Live Alerts
+   ========================================================================== */
+
+/* --- Slim Left Navigation Rail --- */
+.telemetry-nav-rail {
+  width: 82px !important;
+  min-width: 82px;
+  background-color: #081d3d !important;
+  border-right: 1px solid #132b52;
+  padding: 18px 8px 16px !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  transition: width 0.2s ease;
+}
+
+.telemetry-brand-rail {
+  padding: 0 0 16px 0;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.telemetry-logo-circle {
+  width: 44px;
+  height: 44px;
+  background-color: #FFFFFF;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.telemetry-logo-circle:hover {
+  transform: scale(1.06);
+}
+
+.telemetry-rail-logo {
+  width: 26px;
+  height: 26px;
+}
+
+.telemetry-sidebar-nav {
+  width: 100%;
+}
+
+.telemetry-nav-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+.telemetry-nav-list .nav-item {
+  width: 100%;
+}
+
+.telemetry-nav-btn {
+  width: 100%;
+  padding: 10px 4px !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 12px !important;
+  color: #94A3B8 !important;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.telemetry-nav-btn .nav-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  text-align: center;
+  line-height: 1.1;
+}
+
+.telemetry-nav-btn:hover {
+  color: #FFFFFF !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+.telemetry-nav-btn.active {
+  background: #1765D1 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 14px rgba(23, 101, 209, 0.4);
+}
+
+.nav-alert-badge {
+  position: absolute;
+  top: 4px;
+  right: 12px;
+  background-color: #EF4444;
+  color: #FFFFFF;
+  font-size: 0.625rem;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 1px 5px;
+  line-height: 1.2;
+}
+
+.telemetry-rail-footer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding-top: 16px;
+}
+
+.dozee-style-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.badge-d-circle {
+  width: 32px;
+  height: 32px;
+  background: #FFFFFF;
+  color: #081d3d;
+  font-size: 1.125rem;
+  font-weight: 900;
+  font-family: var(--font-serif);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.badge-name {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #94A3B8;
+  letter-spacing: 0.5px;
+}
+
+/* --- Main Layout Region --- */
+.telemetry-layout-region {
+  background-color: #F3F5F9;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.telemetry-topbar {
+  background-color: #FFFFFF;
+  border-bottom: 1px solid #E2E8F0;
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.network-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #F0FDF4;
+  border: 1px solid #BBF7D0;
+  color: #166534;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.775rem;
+  font-weight: 600;
+}
+
+.network-icon {
+  color: #16A34A;
+  display: flex;
+  align-items: center;
+}
+
+/* --- TOP PATIENT HEADER BANNER (Matching Image 1) --- */
+.telemetry-patient-header {
+  background-color: #FFFFFF;
+  border-bottom: 1px solid #E2E8F0;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.telemetry-all-patients-btn {
+  background-color: #1765D1 !important;
+  color: #FFFFFF !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  padding: 8px 18px !important;
+  border-radius: 8px !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(23, 101, 209, 0.28);
+  white-space: nowrap;
+}
+
+.telemetry-all-patients-btn:hover {
+  background-color: #1252ab !important;
+}
+
+.btn-left-arrow {
+  font-size: 1.25rem;
+  line-height: 1;
+  margin-top: -1px;
+}
+
+.telemetry-patient-info-bar {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex: 1;
+  margin: 0 12px;
+}
+
+.telemetry-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+}
+
+.telemetry-meta-item .meta-label {
+  color: #64748B;
+  font-weight: 500;
+  font-size: 0.825rem;
+}
+
+.telemetry-meta-item .meta-value {
+  color: #0F172A;
+  font-size: 0.875rem;
+}
+
+.telemetry-meta-item.item-patient-name .meta-label {
+  font-size: 0.95rem;
+  color: #475569;
+}
+
+.telemetry-meta-item.item-patient-name .patient-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1E3A8A;
+  letter-spacing: -0.2px;
+}
+
+.telemetry-meta-divider {
+  width: 1px;
+  height: 24px;
+  background-color: #E2E8F0;
+}
+
+.telemetry-edit-btn {
+  background-color: #1765D1 !important;
+  color: #FFFFFF !important;
+  padding: 6px 14px !important;
+  font-size: 0.8125rem !important;
+  border-radius: 6px !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  border: none;
+  margin-left: 8px;
+}
+
+.telemetry-edit-btn:hover {
+  background-color: #1252ab !important;
+}
+
+.telemetry-alerts-banner-btn {
+  background-color: #E52B34;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 20px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(229, 43, 52, 0.35);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.telemetry-alerts-banner-btn:hover {
+  background-color: #cc1f27;
+  transform: translateY(-1px);
+}
+
+.alerts-warning-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.alerts-count-bubble {
+  background-color: #FFFFFF;
+  color: #E52B34;
+  font-size: 0.725rem;
+  font-weight: 800;
+  border-radius: 10px;
+  padding: 1px 7px;
+  margin-left: 2px;
+}
+
+/* --- SUB-HEADER TOOLBAR (Matching Image 1) --- */
+.telemetry-toolbar-strip {
+  background-color: #FFFFFF;
+  border-bottom: 1px solid #E2E8F0;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.telemetry-toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.telemetry-pill-tab {
+  background-color: #1765D1;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 8px;
+  padding: 7px 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(23, 101, 209, 0.25);
+}
+
+.telemetry-risk-legend {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.legend-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot-green {
+  background-color: #10B981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25);
+}
+
+.dot-yellow {
+  background-color: #F59E0B;
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.25);
+}
+
+.dot-red {
+  background-color: #EF4444;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.25);
+}
+
+.telemetry-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.telemetry-avg-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: #64748B;
+  font-weight: 500;
+}
+
+.telemetry-action-btn {
+  border: 1px solid #1765D1 !important;
+  color: #1765D1 !important;
+  background-color: #FFFFFF !important;
+  padding: 6px 14px !important;
+  font-size: 0.8125rem !important;
+  font-weight: 600 !important;
+  border-radius: 6px !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.telemetry-action-btn:hover {
+  background-color: #EFF6FC !important;
+  border-color: #1252ab !important;
+}
+
+.telemetry-date-badge {
+  border: 1px solid #CBD5E1;
+  background-color: #FFFFFF;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #1E293B;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.telemetry-date-badge:hover {
+  border-color: #1765D1;
+}
+
+/* --- TELEMETRY WORKSPACE & ALERTS DRAWER GRID --- */
+.telemetry-workspace-grid {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 16px;
+  padding: 16px 20px;
+  align-items: start;
+}
+
+@media (max-width: 1280px) {
+  .telemetry-workspace-grid {
+    grid-template-columns: 1fr 250px;
+    padding: 12px 14px;
+  }
+}
+
+@media (max-width: 980px) {
+  .telemetry-workspace-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --- SYNCHRONIZED TIMELINE HEADER --- */
+.telemetry-streams-column {
+  background-color: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 12px 16px 16px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.telemetry-timeline-header {
+  display: flex;
+  align-items: center;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #F1F5F9;
+}
+
+.timeline-header-spacer {
+  width: 140px;
+  flex-shrink: 0;
+}
+
+.timeline-header-ticks {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  padding-left: 20px;
+  padding-right: 12px;
+  font-size: 0.725rem;
+  color: #64748B;
+  font-weight: 500;
+  user-select: none;
+}
+
+/* --- STACKED TELEMETRY PARAMETER ROWS --- */
+.telemetry-rows-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.telemetry-row-card {
+  display: flex;
+  align-items: center;
+  background-color: #FAFCFF;
+  border: 1px solid #E8EEF5;
+  border-radius: 8px;
+  overflow: hidden;
+  height: 64px;
+  transition: border-color 0.18s ease;
+}
+
+.telemetry-row-card:hover {
+  border-color: #93C5FD;
+  background-color: #F4F8FD;
+}
+
+.telemetry-metric-tile {
+  width: 140px;
+  flex-shrink: 0;
+  height: 100%;
+  background-color: #FFFFFF;
+  border-right: 1px solid #E2E8F0;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  gap: 12px;
+}
+
+.metric-icon-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.circle-ews {
+  background-color: #EFF6FF;
+  border: 1.5px solid #3B82F6;
+  color: #1D4ED8;
+}
+
+.circle-ews .icon-letter {
+  font-size: 1.1rem;
+  font-weight: 800;
+  font-family: var(--font-serif);
+}
+
+.circle-hr {
+  background-color: #EFF6FF;
+  border: 1.5px solid #60A5FA;
+}
+
+.circle-rr {
+  background-color: #F0F9FF;
+  border: 1.5px solid #38BDF8;
+}
+
+.circle-bp {
+  background-color: #F5F3FF;
+  border: 1.5px solid #A78BFA;
+}
+
+.circle-spo2 {
+  background-color: #ECFDF5;
+  border: 1.5px solid #34D399;
+  color: #059669;
+}
+
+.icon-subscript {
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.circle-temp {
+  background-color: #F0FDFA;
+  border: 1.5px solid #2DD4BF;
+}
+
+.metric-readout {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.metric-val {
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: #0F172A;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.metric-sub-labels {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.metric-lbl {
+  font-size: 0.725rem;
+  font-weight: 700;
+  color: #1E3A8A;
+}
+
+.metric-unit {
+  font-size: 0.65rem;
+  color: #64748B;
+  font-weight: 600;
+}
+
+.telemetry-chart-strip-wrap {
+  flex: 1;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  padding: 0 4px;
+}
+
+.telemetry-canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+/* --- Live ML Deterioration Assessment Banner Underneath Telemetry --- */
+.telemetry-ml-banner {
+  margin-top: 14px;
+  background: linear-gradient(135deg, #0B1F41 0%, #173663 100%);
+  border-radius: 8px;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  color: #FFFFFF;
+}
+
+.ml-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ml-badge-icon {
+  font-size: 1.4rem;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+
+.ml-banner-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ml-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+}
+
+.ml-score-pill {
+  background-color: #10B981;
+  color: #FFFFFF;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+}
+
+.ml-banner-sub {
+  font-size: 0.775rem;
+  color: #94A3B8;
+  margin: 0;
+}
+
+.ml-banner-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.ml-metric-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.ml-metric-stat .stat-lbl {
+  font-size: 0.7rem;
+  color: #94A3B8;
+}
+
+.ml-metric-stat .stat-num {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #38BDF8;
+  font-family: monospace;
+}
+
+/* --- RIGHT: LIVE WARD ALERTS DRAWER (Matching Image 1) --- */
+.telemetry-alerts-column {
+  background-color: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.telemetry-alerts-head-strip {
+  background-color: #E52B34;
+  color: #FFFFFF;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 800;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+}
+
+.telemetry-alerts-cards-list {
+  display: flex;
+  flex-direction: column;
+  divide-y: 1px solid #F1F5F9;
+  max-height: 520px;
+  overflow-y: auto;
+}
+
+.telemetry-alert-patient-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-bottom: 1px solid #F1F5F9;
+  cursor: pointer;
+  transition: all 0.16s ease;
+  background-color: #FFFFFF;
+}
+
+.telemetry-alert-patient-card:hover {
+  background-color: #FEF2F2;
+}
+
+.telemetry-alert-patient-card.active {
+  background-color: #EFF6FF;
+  border-left: 4px solid #1765D1;
+}
+
+.card-left-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.alert-card-time {
+  font-size: 0.6875rem;
+  color: #64748B;
+  font-weight: 500;
+}
+
+.alert-card-patient-name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #0F172A;
+}
+
+.alert-card-bed-id {
+  font-size: 0.725rem;
+  color: #475569;
+  font-weight: 600;
+}
+
+.alert-card-badge-pending {
+  font-size: 0.625rem;
+  color: #D97706;
+  background-color: #FEF3C7;
+  padding: 1px 6px;
+  border-radius: 4px;
+  display: inline-block;
+  font-weight: 600;
+  margin-top: 2px;
+  width: fit-content;
+}
+
+.card-right-vital-badge {
+  background-color: #DC2626;
+  color: #FFFFFF;
+  border-radius: 6px;
+  padding: 6px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 68px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(220, 38, 38, 0.3);
+}
+
+.card-right-vital-badge .badge-icon {
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.card-right-vital-badge .badge-num {
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.card-right-vital-badge .badge-unit {
+  font-size: 0.575rem;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.card-right-vital-badge.badge-rr {
+  background-color: #DC2626;
+}
+
+.card-right-vital-badge.badge-hr {
+  background-color: #DC2626;
+}
+
+.card-right-vital-badge.badge-ews {
+  background-color: #B91C1C;
+}
+
+.card-right-vital-badge.badge-temp {
+  background-color: #EA580C;
+}
+

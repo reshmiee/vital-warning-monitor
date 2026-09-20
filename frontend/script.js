@@ -1233,6 +1233,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (reportWhyText) reportWhyText.textContent = patient.whyOneLine;
 
+    // Populate Top Telemetry Banner Demographics (Image 1)
+    const ptIdEl = document.getElementById('telemetry-pt-id');
+    if (ptIdEl) ptIdEl.textContent = patient.id || 'PT-1234';
+    
+    const ptBedEl = document.getElementById('telemetry-pt-bed');
+    if (ptBedEl) ptBedEl.textContent = patient.bedNumber ? `BD-${patient.bedNumber.replace(/[^0-9A-Za-z]/g, '')}` : 'BD-198032';
+
+    const ptDoctorEl = document.getElementById('telemetry-pt-doctor');
+    if (ptDoctorEl) ptDoctorEl.textContent = patient.doctor || 'Dr. Sharma';
+
     // Score Panel
     if (reportScoreBox) {
       reportScoreBox.className = `report-score-panel score-panel-${patient.tier}`;
@@ -1258,7 +1268,7 @@ document.addEventListener('DOMContentLoaded', () => {
       reportTrendValue.className = `report-trend-arrow-text ${trendClass}`;
     }
 
-    // Populate Current Vitals Strip
+    // Populate Current Vitals & Stacked Telemetry Readouts (Matching Image 1)
     const vitals = patient.vitals || {
       respiratoryRate: 24, rrStatus: 'rising',
       oxygenSaturation: 91, spo2Status: 'falling',
@@ -1266,6 +1276,27 @@ document.addEventListener('DOMContentLoaded', () => {
       pulse: 102, pulseStatus: 'stable',
       temperature: 37.8, tempStatus: 'stable'
     };
+
+    const valHrEl = document.getElementById('telemetry-val-hr');
+    if (valHrEl) valHrEl.textContent = vitals.pulse;
+
+    const valRrEl = document.getElementById('telemetry-val-rr');
+    if (valRrEl) valRrEl.textContent = vitals.respiratoryRate;
+
+    const valBpSysEl = document.getElementById('telemetry-val-bpsys');
+    if (valBpSysEl) valBpSysEl.textContent = vitals.systolicBP;
+
+    const valBpDiaEl = document.getElementById('telemetry-val-bpdia');
+    if (valBpDiaEl) valBpDiaEl.textContent = Math.round(vitals.systolicBP * 0.65);
+
+    const valSpo2El = document.getElementById('telemetry-val-spo2');
+    if (valSpo2El) valSpo2El.textContent = vitals.oxygenSaturation;
+
+    const valTempEl = document.getElementById('telemetry-val-temp');
+    if (valTempEl) {
+      const tempF = (vitals.temperature * 9 / 5 + 32).toFixed(1);
+      valTempEl.textContent = tempF;
+    }
 
     if (vitalValRr) vitalValRr.textContent = vitals.respiratoryRate;
     if (vitalStatusRr) {
@@ -1297,6 +1328,17 @@ document.addEventListener('DOMContentLoaded', () => {
       vitalStatusTemp.className = `vital-tile-status status-${vitals.tempStatus}`;
     }
 
+    // Highlight matching patient card in right-hand Alerts Drawer
+    const alertCards = document.querySelectorAll('.telemetry-alert-patient-card');
+    alertCards.forEach(c => {
+      const bed = c.getAttribute('data-bed');
+      if (bed && (bed === patient.bedNumber || patient.bedNumber.includes(bed))) {
+        c.classList.add('active');
+      } else {
+        c.classList.remove('active');
+      }
+    });
+
     // Populate Alert History Table
     if (reportAlertsBody) {
       const alerts = patient.alerts && patient.alerts.length > 0 ? patient.alerts : [
@@ -1324,6 +1366,28 @@ document.addEventListener('DOMContentLoaded', () => {
       renderPatientCharts(patient, livePred);
     }).catch(() => {
       renderPatientCharts(patient, null);
+    });
+  }
+
+  // Bind < All Patients Header Button Click (Image 1)
+  const telemetryAllPatientsBtn = document.getElementById('telemetry-all-patients-btn');
+  if (telemetryAllPatientsBtn) {
+    telemetryAllPatientsBtn.addEventListener('click', () => {
+      navigateTo('dashboard', 'ward');
+    });
+  }
+
+  // Bind Right Alerts Drawer Cards Clicking to Switch Patient Telemetry
+  const telemetryAlertsList = document.getElementById('telemetry-alerts-list');
+  if (telemetryAlertsList) {
+    telemetryAlertsList.addEventListener('click', (e) => {
+      const card = e.target.closest('.telemetry-alert-patient-card');
+      if (card) {
+        const bed = card.getAttribute('data-bed');
+        if (bed) {
+          openPatientReport(bed, 'vitals');
+        }
+      }
     });
   }
 
@@ -1556,248 +1620,122 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  function createMiniVitalChart(canvasId, config) {
+  /* ==========================================================================
+     PART B-2: DOZEE-STYLE CLINICAL TELEMETRY ENGINE & STRIP CHARTS
+     ========================================================================== */
+  
+  // Register custom Chart.js plugin to draw horizontal shaded risk zones
+  const riskBandsPlugin = {
+    id: 'riskBands',
+    beforeDraw: (chart) => {
+      const { ctx, chartArea, scales } = chart;
+      if (!ctx || !chartArea || !scales || !scales.y) return;
+      const yScale = scales.y;
+      const pluginOpts = chart.config.options?.plugins?.riskBands;
+      const bands = pluginOpts?.bands;
+      if (!bands || !bands.length) return;
+
+      ctx.save();
+      bands.forEach(band => {
+        const topVal = Math.min(band.max, yScale.max);
+        const btmVal = Math.max(band.min, yScale.min);
+        if (topVal >= btmVal) {
+          const yTop = yScale.getPixelForValue(topVal);
+          const yBottom = yScale.getPixelForValue(btmVal);
+          const h = Math.abs(yBottom - yTop);
+          if (h > 0) {
+            ctx.fillStyle = band.color;
+            ctx.fillRect(chartArea.left, Math.min(yTop, yBottom), chartArea.width, h);
+          }
+        }
+      });
+      ctx.restore();
+    }
+  };
+
+  if (typeof Chart !== 'undefined') {
+    Chart.register(riskBandsPlugin);
+  }
+
+  function createTelemetryStripChart(canvasId, config) {
     const canvas = document.getElementById(canvasId);
     if (!canvas) return;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const labels = config.labels;
-    const thresholdData = Array(labels.length).fill(config.threshold);
-
     const chart = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: labels,
+        labels: config.labels,
         datasets: [
           {
-            label: 'Actual',
-            data: config.actual,
-            borderColor: config.color,
-            backgroundColor: config.color,
+            label: config.name,
+            data: config.data,
+            borderColor: '#1E293B',
+            backgroundColor: 'transparent',
             borderWidth: 2.2,
-            tension: 0.35,
-            pointRadius: (ctx) => (ctx.dataIndex === 4 ? 4.5 : 2.5),
+            tension: 0.28,
+            pointRadius: (ctx) => (ctx.dataIndex === config.data.length - 1 ? 4.5 : 3),
             pointHoverRadius: 5.5,
-            pointBackgroundColor: (ctx) => (ctx.dataIndex === 4 ? '#0B1F41' : config.color),
+            pointBackgroundColor: (ctx) => (ctx.dataIndex === config.data.length - 1 ? '#0F172A' : '#1E293B'),
             pointBorderColor: '#FFFFFF',
             pointBorderWidth: 1.5,
             fill: false,
-            spanGaps: false
-          },
-          {
-            label: 'Forecast',
-            data: config.forecast,
-            borderColor: config.color,
-            backgroundColor: '#FFFFFF',
-            borderWidth: 2,
-            borderDash: [5, 4],
-            tension: 0.35,
-            pointRadius: (ctx) => (ctx.dataIndex === 4 ? 0 : 3),
-            pointHoverRadius: 5,
-            pointBackgroundColor: '#FFFFFF',
-            pointBorderColor: config.color,
-            pointBorderWidth: 2,
-            fill: false,
-            spanGaps: false
-          },
-          {
-            label: `NEWS2 threshold (${config.threshold})`,
-            data: thresholdData,
-            borderColor: config.thresholdColor || '#E53945',
-            borderWidth: 1.2,
-            borderDash: [4, 3],
-            pointRadius: 0,
-            pointHoverRadius: 0,
-            fill: false
+            spanGaps: true
           }
         ]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        animation: { duration: 350 },
         layout: {
-          padding: { top: 6, bottom: 2, left: 4, right: 8 }
+          padding: { top: 3, bottom: 3, left: 2, right: 6 }
         },
         plugins: {
           legend: { display: false },
+          riskBands: {
+            bands: config.bands || []
+          },
           tooltip: {
+            enabled: true,
             mode: 'index',
             intersect: false,
-            backgroundColor: '#0B1F41',
-            titleFont: { family: "'Public Sans', sans-serif", size: 11, weight: '600' },
+            backgroundColor: '#0F172A',
+            titleColor: '#F8FAFC',
+            bodyColor: '#FFFFFF',
+            titleFont: { family: "'Public Sans', sans-serif", size: 11, weight: '700' },
             bodyFont: { family: "'Public Sans', sans-serif", size: 11 },
             padding: 8,
             cornerRadius: 6,
-            filter: (item) => item.raw !== null && item.raw !== undefined,
             callbacks: {
-              label: (context) => {
-                const dsName = context.dataset.label;
-                return ` ${dsName}: ${context.raw} ${config.unit || ''}`;
-              }
+              title: (items) => `${items[0].label} (Ward Telemetry)`,
+              label: (item) => ` ${config.name}: ${item.raw} ${config.unit || ''}`
             }
           }
         },
         scales: {
           x: {
+            display: false,
             grid: {
-              color: 'rgba(226, 235, 242, 0.7)',
+              display: true,
+              color: 'rgba(148, 163, 184, 0.2)',
               drawBorder: false
-            },
-            ticks: {
-              color: (tick) => (tick.index === 4 ? '#0B1F41' : '#64748B'),
-              font: (tick) => ({
-                family: "'Public Sans', sans-serif",
-                size: 10,
-                weight: tick.index === 4 ? '700' : '400'
-              }),
-              padding: 4
             }
           },
           y: {
             min: config.min,
             max: config.max,
             grid: {
-              color: 'rgba(226, 235, 242, 0.7)',
+              display: false,
               drawBorder: false
             },
             ticks: {
-              color: '#94A3B8',
-              font: { family: "'Public Sans', sans-serif", size: 10 },
-              maxTicksLimit: 4,
+              color: '#64748B',
+              font: { family: "'Public Sans', sans-serif", size: 9, weight: '600' },
+              maxTicksLimit: 3,
               padding: 4
-            }
-          }
-        }
-      }
-    });
-
-    patientChartInstances[canvasId] = chart;
-  }
-
-  function createNews2FullChart(canvasId, config) {
-    const canvas = document.getElementById(canvasId);
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const labels = config.labels;
-
-    const chart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: labels,
-        datasets: [
-          {
-            label: 'Actual score',
-            data: config.actual,
-            borderColor: '#0B1F41',
-            backgroundColor: '#0B1F41',
-            borderWidth: 2.8,
-            tension: 0.35,
-            pointRadius: (ctx) => (ctx.dataIndex === 4 ? 6 : 3.5),
-            pointHoverRadius: 7,
-            pointBackgroundColor: (ctx) => (ctx.dataIndex === 4 ? '#E53945' : '#0B1F41'),
-            pointBorderColor: '#FFFFFF',
-            pointBorderWidth: 2,
-            fill: false,
-            spanGaps: false
-          },
-          {
-            label: 'Forecast score',
-            data: config.forecast,
-            borderColor: '#1765D1',
-            backgroundColor: '#FFFFFF',
-            borderWidth: 2.5,
-            borderDash: [6, 4],
-            tension: 0.35,
-            pointRadius: (ctx) => (ctx.dataIndex === 4 ? 0 : 4),
-            pointHoverRadius: 6,
-            pointBackgroundColor: '#FFFFFF',
-            pointBorderColor: '#1765D1',
-            pointBorderWidth: 2,
-            fill: false,
-            spanGaps: false
-          },
-          {
-            label: 'High risk threshold (7)',
-            data: Array(labels.length).fill(config.highThreshold),
-            borderColor: '#E53945',
-            borderWidth: 1.5,
-            borderDash: [5, 4],
-            pointRadius: 0,
-            pointHoverRadius: 0,
-            fill: false
-          },
-          {
-            label: 'Medium risk threshold (5)',
-            data: Array(labels.length).fill(config.medThreshold),
-            borderColor: '#E9A313',
-            borderWidth: 1.5,
-            borderDash: [5, 4],
-            pointRadius: 0,
-            pointHoverRadius: 0,
-            fill: false
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        layout: {
-          padding: { top: 8, bottom: 4, left: 6, right: 12 }
-        },
-        plugins: {
-          legend: {
-            display: false
-          },
-          tooltip: {
-            mode: 'index',
-            intersect: false,
-            backgroundColor: '#0B1F41',
-            titleFont: { family: "'Public Sans', sans-serif", size: 12, weight: '600' },
-            bodyFont: { family: "'Public Sans', sans-serif", size: 11 },
-            padding: 10,
-            cornerRadius: 6,
-            filter: (item) => item.raw !== null && item.raw !== undefined,
-            callbacks: {
-              label: (context) => {
-                const dsName = context.dataset.label;
-                return ` ${dsName}: ${context.raw}`;
-              }
-            }
-          }
-        },
-        scales: {
-          x: {
-            grid: {
-              color: 'rgba(226, 235, 242, 0.7)',
-              drawBorder: false
-            },
-            ticks: {
-              color: (tick) => (tick.index === 4 ? '#0B1F41' : '#64748B'),
-              font: (tick) => ({
-                family: "'Public Sans', sans-serif",
-                size: 11,
-                weight: tick.index === 4 ? '700' : '500'
-              }),
-              padding: 6
-            }
-          },
-          y: {
-            min: 0,
-            max: config.max,
-            grid: {
-              color: 'rgba(226, 235, 242, 0.7)',
-              drawBorder: false
-            },
-            ticks: {
-              color: '#94A3B8',
-              font: { family: "'Public Sans', sans-serif", size: 11 },
-              stepSize: 2,
-              padding: 6
             }
           }
         }
@@ -1816,77 +1754,148 @@ document.addEventListener('DOMContentLoaded', () => {
 
     destroyPatientCharts();
 
-    const data = generatePatientVitalSeries(patient, livePred);
+    const timeLabels = ['12am', '1am', '2am', '3am', '4am', '5am', '6am', '7am', '8am', '9am', '10am', '11am', '12pm', '1pm'];
+    const v = patient.vitals || {
+      respiratoryRate: 20,
+      oxygenSaturation: 96,
+      systolicBP: 120,
+      pulse: 78,
+      temperature: 37.0
+    };
 
-    // 1. Respiratory Rate
-    createMiniVitalChart('chart-rr', {
-      labels: data.labels,
-      actual: data.rr.actual,
-      forecast: data.rr.forecast,
-      threshold: data.rr.threshold,
-      color: '#1765D1',
-      unit: data.rr.unit,
-      min: data.rr.min,
-      max: data.rr.max
+    const currentEWS = typeof patient.currentScore === 'number' ? patient.currentScore : 2;
+    const currentHR = v.pulse || 75;
+    const currentRR = v.respiratoryRate || 16;
+    const currentSysBP = v.systolicBP || 120;
+    const currentDiaBP = Math.round(currentSysBP * 0.65);
+    const currentSpo2 = v.oxygenSaturation || 98;
+    const currentTempF = parseFloat((v.temperature * 9 / 5 + 32).toFixed(1));
+
+    // Generate smooth 14-tick observation trajectory ending at current vital value
+    const generateTrajectory = (targetVal, variance, min, max, decimals = 0) => {
+      const arr = [];
+      let cur = targetVal - (patient.trend === 'rising' ? variance * 2.5 : (patient.trend === 'falling' ? -variance * 2.5 : variance * 0.4));
+      for (let i = 0; i < 14; i++) {
+        if (i === 13) {
+          arr.push(targetVal);
+        } else {
+          const step = (targetVal - cur) / (14 - i);
+          const noise = (Math.sin(i * 1.5) * variance * 0.35);
+          cur = Math.max(min, Math.min(max, cur + step + noise));
+          arr.push(decimals > 0 ? parseFloat(cur.toFixed(decimals)) : Math.round(cur));
+        }
+      }
+      return arr;
+    };
+
+    // 1. EWS (NEWS2) Strip
+    createTelemetryStripChart('telemetry-chart-ews', {
+      name: 'EWS',
+      unit: '',
+      min: 0,
+      max: 12,
+      labels: timeLabels,
+      data: generateTrajectory(currentEWS, 1.8, 0, 12, 0),
+      bands: [
+        { min: 7, max: 12, color: '#FEE2E2' },
+        { min: 4, max: 7, color: '#FEF3C7' },
+        { min: 0, max: 4, color: '#DCFCE7' }
+      ]
     });
 
-    // 2. SpO2
-    createMiniVitalChart('chart-spo2', {
-      labels: data.labels,
-      actual: data.spo2.actual,
-      forecast: data.spo2.forecast,
-      threshold: data.spo2.threshold,
-      color: '#10B981',
-      unit: data.spo2.unit,
-      min: data.spo2.min,
-      max: data.spo2.max
+    // 2. HR (Heart Rate / BPM)
+    createTelemetryStripChart('telemetry-chart-hr', {
+      name: 'HR',
+      unit: 'BPM',
+      min: 40,
+      max: 140,
+      labels: timeLabels,
+      data: generateTrajectory(currentHR, 6, 40, 140, 0),
+      bands: [
+        { min: 120, max: 140, color: '#FEE2E2' },
+        { min: 90, max: 120, color: '#FEF3C7' },
+        { min: 50, max: 90, color: '#DCFCE7' },
+        { min: 40, max: 50, color: '#FEF3C7' }
+      ]
     });
 
-    // 3. Systolic BP
-    createMiniVitalChart('chart-sbp', {
-      labels: data.labels,
-      actual: data.sbp.actual,
-      forecast: data.sbp.forecast,
-      threshold: data.sbp.threshold,
-      color: '#8B5CF6',
-      unit: data.sbp.unit,
-      min: data.sbp.min,
-      max: data.sbp.max
+    // 3. RR (Respiratory Rate / RPM)
+    createTelemetryStripChart('telemetry-chart-rr', {
+      name: 'RR',
+      unit: 'RPM',
+      min: 6,
+      max: 32,
+      labels: timeLabels,
+      data: generateTrajectory(currentRR, 3.5, 6, 32, 0),
+      bands: [
+        { min: 24, max: 32, color: '#FEE2E2' },
+        { min: 20, max: 24, color: '#FEF3C7' },
+        { min: 12, max: 20, color: '#DCFCE7' },
+        { min: 6, max: 12, color: '#FEF3C7' }
+      ]
     });
 
-    // 4. Pulse
-    createMiniVitalChart('chart-pulse', {
-      labels: data.labels,
-      actual: data.pulse.actual,
-      forecast: data.pulse.forecast,
-      threshold: data.pulse.threshold,
-      thresholdColor: '#E9A313',
-      color: '#F59E0B',
-      unit: data.pulse.unit,
-      min: data.pulse.min,
-      max: data.pulse.max
+    // 4. BP(Sys) (Systolic Blood Pressure / mmHg)
+    createTelemetryStripChart('telemetry-chart-bpsys', {
+      name: 'BP(Sys)',
+      unit: 'mmHg',
+      min: 70,
+      max: 180,
+      labels: timeLabels,
+      data: generateTrajectory(currentSysBP, 8, 70, 180, 0),
+      bands: [
+        { min: 160, max: 180, color: '#FEE2E2' },
+        { min: 140, max: 160, color: '#FEF3C7' },
+        { min: 100, max: 140, color: '#DCFCE7' },
+        { min: 70, max: 100, color: '#FEE2E2' }
+      ]
     });
 
-    // 5. Temperature
-    createMiniVitalChart('chart-temp', {
-      labels: data.labels,
-      actual: data.temp.actual,
-      forecast: data.temp.forecast,
-      threshold: data.temp.threshold,
-      color: '#0D9488',
-      unit: data.temp.unit,
-      min: data.temp.min,
-      max: data.temp.max
+    // 5. BP(Dia) (Diastolic Blood Pressure / mmHg)
+    createTelemetryStripChart('telemetry-chart-bpdia', {
+      name: 'BP(Dia)',
+      unit: 'mmHg',
+      min: 45,
+      max: 110,
+      labels: timeLabels,
+      data: generateTrajectory(currentDiaBP, 5, 45, 110, 0),
+      bands: [
+        { min: 95, max: 110, color: '#FEE2E2' },
+        { min: 85, max: 95, color: '#FEF3C7' },
+        { min: 55, max: 85, color: '#DCFCE7' },
+        { min: 45, max: 55, color: '#FEF3C7' }
+      ]
     });
 
-    // 6. NEWS2 Full-Width
-    createNews2FullChart('chart-news2', {
-      labels: data.labels,
-      actual: data.news2.actual,
-      forecast: data.news2.forecast,
-      highThreshold: data.news2.highThreshold,
-      medThreshold: data.news2.medThreshold,
-      max: data.news2.max
+    // 6. SpO2 (Oxygen Saturation / %)
+    createTelemetryStripChart('telemetry-chart-spo2', {
+      name: 'SpO₂',
+      unit: '%',
+      min: 84,
+      max: 100,
+      labels: timeLabels,
+      data: generateTrajectory(currentSpo2, 2.2, 84, 100, 0),
+      bands: [
+        { min: 96, max: 100, color: '#DCFCE7' },
+        { min: 92, max: 96, color: '#FEF3C7' },
+        { min: 84, max: 92, color: '#FEE2E2' }
+      ]
+    });
+
+    // 7. Temp (Temperature / °F)
+    createTelemetryStripChart('telemetry-chart-temp', {
+      name: 'Temp',
+      unit: '°F',
+      min: 96.0,
+      max: 104.0,
+      labels: timeLabels,
+      data: generateTrajectory(currentTempF, 0.6, 96.0, 104.0, 1),
+      bands: [
+        { min: 100.4, max: 104.0, color: '#FEE2E2' },
+        { min: 99.4, max: 100.4, color: '#FEF3C7' },
+        { min: 97.0, max: 99.4, color: '#DCFCE7' },
+        { min: 96.0, max: 97.0, color: '#FEF3C7' }
+      ]
     });
   }
 
@@ -2125,7 +2134,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const linkTarget = btn.getAttribute('data-target');
       if (!isPatientReport && linkTarget === targetKey) {
         btn.classList.add('active');
-      } else if (isPatientReport && linkTarget === lastActiveDashboardTab) {
+      } else if (isPatientReport && (linkTarget === 'vitals' || linkTarget === lastActiveDashboardTab)) {
         btn.classList.add('active');
       } else {
         btn.classList.remove('active');
@@ -2142,6 +2151,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (isPatientReport) {
       if (patientReportView) patientReportView.style.display = 'block';
+    } else if (targetKey === 'vitals') {
+      lastActiveDashboardTab = 'vitals';
+      const bed = sessionStorage.getItem('selected_patient_bed') || (currentReportPatient ? currentReportPatient.bedNumber : '4B-07');
+      openPatientReport(bed, 'vitals');
     } else if (targetKey === 'ward') {
       lastActiveDashboardTab = 'ward';
       if (wardOverviewView) wardOverviewView.style.display = 'block';

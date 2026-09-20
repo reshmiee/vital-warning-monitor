@@ -422,84 +422,92 @@
        ============================================================ -->
   <div id="dashboard-shell" class="page-view dashboard-shell-view">
     
-    <!-- Left Persistent Sidebar (~310px) -->
-    <aside class="dashboard-sidebar" aria-label="Main Navigation">
+    <!-- Left Slim Clinical Navigation Rail (Dozee ICU Telemetry Style) -->
+    <aside class="dashboard-sidebar telemetry-nav-rail" aria-label="Main Navigation">
       <div class="sidebar-top">
-        <!-- Aarogya Branding -->
-        <div class="sidebar-branding">
-          <div class="sidebar-logo-lockup">
-            <svg class="sidebar-logo-icon" viewBox="0 0 64 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <path d="M4 18H16L22 4L30 32L38 10L44 22L48 18H60" stroke="#216A86" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- Telemetry Brand Lockup -->
+        <div class="sidebar-branding telemetry-brand-rail">
+          <div class="telemetry-logo-circle" title="Aarogya Clinical Telemetry">
+            <svg viewBox="0 0 32 32" class="telemetry-rail-logo" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 16H9L12 8L17 24L21 11L24 18L26 16H29" stroke="#1765D1" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-            <span class="sidebar-brand-name">Aarogya</span>
           </div>
-          <div class="sidebar-brand-tagline">PREDICT &nbsp; MONITOR &nbsp; PREVENT</div>
         </div>
 
         <!-- Navigation Menu -->
-        <nav class="sidebar-nav">
-          <ul class="nav-list">
+        <nav class="sidebar-nav telemetry-sidebar-nav">
+          <ul class="nav-list telemetry-nav-list">
             
-            <!-- 1. Ward Overview (Default Active) -->
+            <!-- 1. Vitals (Telemetry Monitor) -->
             <li class="nav-item">
-              <button type="button" class="btn btn-ghost nav-link active" id="nav-item-ward" data-target="ward">
-                <span class="nav-active-bar" aria-hidden="true"></span>
+              <button type="button" class="btn btn-ghost nav-link telemetry-nav-btn active" id="nav-item-vitals" data-target="vitals" title="Live Vitals Telemetry">
                 <span class="nav-icon-wrap" aria-hidden="true">
-                  <!-- Home / Ward Icon -->
-                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                  <!-- Waveform / Vitals Icon -->
+                  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
                   </svg>
                 </span>
-                <span class="nav-label">Ward overview</span>
+                <span class="nav-label">Vitals</span>
               </button>
             </li>
 
-            <!-- 2. High Surveillance -->
+            <!-- 2. Alerts Log -->
             <li class="nav-item">
-              <button type="button" class="btn btn-ghost nav-link" id="nav-item-surveillance" data-target="surveillance">
-                <span class="nav-active-bar" aria-hidden="true"></span>
+              <button type="button" class="btn btn-ghost nav-link telemetry-nav-btn" id="nav-item-alerts" data-target="alerts" title="Alerts History & Log">
                 <span class="nav-icon-wrap" aria-hidden="true">
-                  <!-- Bar Chart / Monitoring Icon -->
-                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="18" y1="20" x2="18" y2="10"></line>
-                    <line x1="12" y1="20" x2="12" y2="4"></line>
-                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                  <!-- Bell / Alerts Icon -->
+                  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                   </svg>
                 </span>
-                <span class="nav-label">High surveillance</span>
+                <span class="nav-label">Alerts Log</span>
+                <span class="nav-alert-badge" id="rail-alert-badge">2</span>
               </button>
             </li>
 
-            <!-- 3. Patient Lookup -->
+            <!-- 3. Reports (Patient Lookup & Reports) -->
             <li class="nav-item">
-              <button type="button" class="btn btn-ghost nav-link" id="nav-item-lookup" data-target="lookup">
-                <span class="nav-active-bar" aria-hidden="true"></span>
+              <button type="button" class="btn btn-ghost nav-link telemetry-nav-btn" id="nav-item-lookup" data-target="lookup" title="Clinical Reports & Lookup">
                 <span class="nav-icon-wrap" aria-hidden="true">
-                  <!-- Search Icon -->
-                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  <!-- Document / Reports Icon -->
+                  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <line x1="10" y1="9" x2="8" y2="9"></line>
                   </svg>
                 </span>
-                <span class="nav-label">Patient lookup</span>
+                <span class="nav-label">Reports</span>
               </button>
             </li>
 
-            <!-- 4. Alerts History -->
+            <!-- 4. Devices / Ward Overview -->
             <li class="nav-item">
-              <button type="button" class="btn btn-ghost nav-link" id="nav-item-alerts" data-target="alerts">
-                <span class="nav-active-bar" aria-hidden="true"></span>
+              <button type="button" class="btn btn-ghost nav-link telemetry-nav-btn" id="nav-item-ward" data-target="ward" title="Ward Beds & Connected Devices">
                 <span class="nav-icon-wrap" aria-hidden="true">
-                  <!-- Clipboard / Document History Icon -->
-                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
-                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
-                    <line x1="9" y1="12" x2="15" y2="12"></line>
-                    <line x1="9" y1="16" x2="13" y2="16"></line>
+                  <!-- Monitor / Devices Icon -->
+                  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                    <line x1="8" y1="21" x2="16" y2="21"></line>
+                    <line x1="12" y1="17" x2="12" y2="21"></line>
                   </svg>
                 </span>
-                <span class="nav-label">Alerts history</span>
+                <span class="nav-label">Devices</span>
+              </button>
+            </li>
+
+            <!-- 5. High Surveillance (Quick filter) -->
+            <li class="nav-item">
+              <button type="button" class="btn btn-ghost nav-link telemetry-nav-btn" id="nav-item-surveillance" data-target="surveillance" title="High Surveillance">
+                <span class="nav-icon-wrap" aria-hidden="true">
+                  <!-- Radar / Warning Icon -->
+                  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+                  </svg>
+                </span>
+                <span class="nav-label">Priority</span>
               </button>
             </li>
 
@@ -507,20 +515,20 @@
         </nav>
       </div>
 
-      <!-- Bottom Sidebar Quote / Tagline -->
-      <div class="sidebar-bottom">
-        <div class="sidebar-divider-bar" aria-hidden="true"></div>
-        <p class="sidebar-closing-quote">
-          A safer tomorrow starts with earlier insight.
-        </p>
+      <!-- Bottom Sidebar Brand Badge -->
+      <div class="sidebar-bottom telemetry-rail-footer">
+        <div class="dozee-style-badge" title="Aarogya Medical Telemetry Platform">
+          <span class="badge-d-circle">a</span>
+          <span class="badge-name">aarogya</span>
+        </div>
       </div>
     </aside>
 
     <!-- Right Content Region -->
-    <div class="dashboard-main-region">
+    <div class="dashboard-main-region telemetry-layout-region">
       
       <!-- Persistent Top Bar -->
-      <header class="dashboard-topbar">
+      <header class="dashboard-topbar telemetry-topbar">
         
         <!-- Left: Ward Context Selector -->
         <div class="topbar-ward-context">
@@ -532,7 +540,7 @@
               </svg>
             </span>
           </div>
-          <span class="ward-subtext">General Medicine</span>
+          <span class="ward-subtext">General Medicine ICU Telemetry</span>
         </div>
 
         <!-- Center: Patient Search -->
@@ -548,19 +556,32 @@
               type="text" 
               class="topbar-search-input" 
               id="global-patient-search" 
-              placeholder="Search patient (name, ID, bed, or ward)..."
+              placeholder="Search patient by name, bed #, or vital..."
               aria-label="Search patient by name, ID, bed, or ward"
             >
           </div>
         </div>
 
-        <!-- Right: Admin User & Logout -->
+        <!-- Right: Admin User & Network Status (matching Image 2) -->
         <div class="topbar-actions">
           
+          <!-- Connected Network Pill (inspired by reference image 2) -->
+          <div class="network-status-pill" title="Connected Hospital Network">
+            <span class="network-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+                <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+                <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                <line x1="12" y1="20" x2="12.01" y2="20"></line>
+              </svg>
+            </span>
+            <span class="network-text">Connected: Ward 4B LAN</span>
+          </div>
+
           <!-- System Backend & DB Status Badge -->
           <div class="system-status-pill" id="system-status-pill" title="Live connection to FastAPI, Supabase Database & ML Model">
             <span class="status-indicator-dot dot-live" id="system-status-dot"></span>
-            <span class="status-indicator-text" id="system-status-text">Connecting...</span>
+            <span class="status-indicator-text" id="system-status-text">Live: Connected</span>
           </div>
 
           <!-- User Profile -->
@@ -571,12 +592,7 @@
                 <circle cx="12" cy="7" r="4"></circle>
               </svg>
             </span>
-            <span class="user-name">Admin</span>
-            <span class="user-chevron" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </span>
+            <span class="user-name">Dr. On Duty</span>
           </div>
 
           <!-- Vertical Divider -->
@@ -591,7 +607,6 @@
                 <line x1="21" y1="12" x2="9" y2="12"></line>
               </svg>
             </span>
-            <span class="logout-label">Log out</span>
           </button>
 
         </div>
@@ -849,258 +864,480 @@
 
           
           <!-- ============================================================
-               SLOT 4: PATIENT FULL REPORT PAGE (PART B)
+               SLOT 4: PATIENT FULL REPORT & TELEMETRY MONITOR (DOZEE ICU STYLE)
                ============================================================ -->
-          <div id="patient-report-view" class="dashboard-subview" style="display: none;">
+          <div id="patient-report-view" class="dashboard-subview telemetry-dashboard-view" style="display: none;">
             
-            <!-- Report Top Navigation Bar -->
-            <div class="report-top-nav">
-              <button type="button" class="btn btn-ghost report-back-btn" id="report-back-btn">
-                ← Back to search
-              </button>
-              <div class="report-timestamp-wrap">
-                <span class="report-updated-label" id="report-timestamp-text">Last updated: 2 min ago</span>
-                <button type="button" class="btn btn-ghost report-refresh-btn" id="report-refresh-btn" title="Refresh vitals">
-                  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="23 4 23 10 17 10"></polyline>
-                    <polyline points="1 20 1 14 7 14"></polyline>
-                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-                  </svg>
+            <!-- Hidden backward-compatibility elements to keep existing logic rock solid -->
+            <div style="display: none;" aria-hidden="true">
+              <button id="report-back-btn"></button>
+              <button id="report-refresh-btn"></button>
+              <span id="report-timestamp-text"></span>
+              <div id="report-tier-indicator"></div>
+              <span id="report-patient-meta"></span>
+              <span id="report-why-text"></span>
+              <div id="report-score-box"><span id="report-score-label"></span></div>
+              <span id="report-trend-value"></span>
+              <span id="vital-val-pulse"></span><span id="vital-status-pulse"></span>
+              <span id="vital-val-temp"></span><span id="vital-status-temp"></span>
+              <span id="vital-val-rr"></span><span id="vital-status-rr"></span>
+              <span id="vital-val-spo2"></span><span id="vital-status-spo2"></span>
+              <span id="vital-val-bp"></span><span id="vital-status-bp"></span>
+              <div id="report-alerts-body"></div>
+            </div>
+
+            <!-- TOP PATIENT HEADER BANNER (Matching Image 1) -->
+            <section class="telemetry-patient-header" aria-label="Patient Telemetry Header">
+              
+              <!-- Left Action: < All Patients -->
+              <div class="telemetry-header-left">
+                <button type="button" class="btn btn-primary telemetry-all-patients-btn" id="telemetry-all-patients-btn" title="Back to All Patients in Ward">
+                  <span class="btn-left-arrow" aria-hidden="true">‹</span>
+                  <span>All Patients</span>
                 </button>
               </div>
-            </div>
 
-            <!-- Expanded Hero Patient Status Card -->
-            <div class="report-hero-card" id="report-hero-card">
-              <!-- Colored Left Tier Bar -->
-              <div class="report-tier-bar tier-bar-high" id="report-tier-indicator"></div>
-
-              <!-- Center Info Block -->
-              <div class="report-hero-info">
-                <h1 class="report-patient-name" id="report-patient-name">Wilson, Margaret</h1>
-                <p class="report-patient-meta" id="report-patient-meta">F, 72 &nbsp;|&nbsp; Bed 4B-07 &nbsp;|&nbsp; Ward 4B (General Medicine)</p>
-                <div class="report-why-row">
-                  <span class="report-why-label">Why flagged</span>
-                  <span class="report-why-value" id="report-why-text">RR rising, SpO₂ falling</span>
+              <!-- Center Patient Demographic Metadata Grid -->
+              <div class="telemetry-patient-info-bar">
+                
+                <!-- Patient Name -->
+                <div class="telemetry-meta-item item-patient-name">
+                  <span class="meta-label">Patient Name :</span>
+                  <strong class="meta-value patient-title" id="report-patient-name">Wilson, Margaret</strong>
                 </div>
-              </div>
 
-              <!-- NEWS2 Score Hero Panel -->
-              <div class="report-score-panel score-panel-high" id="report-score-box">
-                <span class="score-panel-title">NEWS2 score</span>
-                <span class="score-panel-number" id="report-score-value">9</span>
-                <span class="score-panel-tier-label" id="report-score-label">High risk</span>
-              </div>
+                <div class="telemetry-meta-divider" aria-hidden="true"></div>
 
-              <!-- Trend Panel -->
-              <div class="report-trend-panel" id="report-trend-box">
-                <span class="report-trend-arrow-text trend-rising" id="report-trend-value">↗ Rising</span>
-                <span class="report-trend-horizon">Increasing risk over next 6 hours</span>
-              </div>
-            </div>
-
-            <!-- Live ML Model Inference Card -->
-            <div class="report-ml-insight-card" id="report-ml-card">
-              <div class="ml-insight-badge">
-                <span class="ml-icon" aria-hidden="true">🧠</span>
-                <div class="ml-info">
-                  <span class="ml-title">XGBoost ML Deterioration Assessment</span>
-                  <span class="ml-meta" id="ml-model-meta">Trained Classifier (191 Features) | Optimal Alert Threshold: 0.2362</span>
+                <!-- Patient ID -->
+                <div class="telemetry-meta-item">
+                  <span class="meta-label">Patient ID :</span>
+                  <span class="meta-value" id="telemetry-pt-id">PT-1007</span>
                 </div>
-              </div>
-              <div class="ml-score-block">
-                <span class="ml-score-label">Predicted Risk:</span>
-                <span class="ml-score-val" id="ml-risk-score">--</span>
-                <span class="ml-score-tier tier-low" id="ml-risk-tier">--</span>
-              </div>
-              <div class="ml-alert-callout" id="ml-alert-banner">
-                <span id="ml-alert-text">Running live inference against Supabase vitals stream...</span>
-              </div>
-            </div>
 
-            <!-- Current Vital Signs Strip -->
-            <div class="report-section-header">
-              <h2 class="report-section-title">Current vital signs</h2>
-              <span class="report-section-subtitle">(latest reading)</span>
-            </div>
+                <div class="telemetry-meta-divider" aria-hidden="true"></div>
 
-            <div class="report-vitals-strip">
-              <!-- Vital 1: RR -->
-              <div class="vital-tile">
-                <span class="vital-tile-label">RR</span>
-                <div class="vital-tile-value-wrap">
-                  <span class="vital-tile-number" id="vital-val-rr">24</span>
-                  <span class="vital-tile-unit">/min</span>
+                <!-- Bed # -->
+                <div class="telemetry-meta-item">
+                  <span class="meta-label">Bed # :</span>
+                  <span class="meta-value font-bold" id="telemetry-pt-bed">BD-4B07</span>
                 </div>
-                <span class="vital-tile-status status-rising" id="vital-status-rr">(rising)</span>
-              </div>
 
-              <!-- Vital 2: SpO2 -->
-              <div class="vital-tile">
-                <span class="vital-tile-label">SpO₂</span>
-                <div class="vital-tile-value-wrap">
-                  <span class="vital-tile-number" id="vital-val-spo2">91</span>
-                  <span class="vital-tile-unit">%</span>
+                <div class="telemetry-meta-divider" aria-hidden="true"></div>
+
+                <!-- Consulting Doctor -->
+                <div class="telemetry-meta-item">
+                  <span class="meta-label">Consulting Doctor :</span>
+                  <span class="meta-value" id="telemetry-pt-doctor">Dr. Sharma</span>
                 </div>
-                <span class="vital-tile-status status-falling" id="vital-status-spo2">(falling)</span>
+
+                <!-- Edit Button -->
+                <button type="button" class="btn btn-ghost telemetry-edit-btn" id="telemetry-edit-btn" title="Edit Patient Details">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                  </svg>
+                  <span>Edit</span>
+                </button>
               </div>
 
-              <!-- Vital 3: Systolic BP -->
-              <div class="vital-tile">
-                <span class="vital-tile-label">Systolic BP</span>
-                <div class="vital-tile-value-wrap">
-                  <span class="vital-tile-number" id="vital-val-bp">98</span>
-                  <span class="vital-tile-unit">mmHg</span>
-                </div>
-                <span class="vital-tile-status status-stable" id="vital-status-bp">(stable)</span>
+              <!-- Right Header Action: ALERTS Alert Badge -->
+              <div class="telemetry-header-right">
+                <button type="button" class="telemetry-alerts-banner-btn" id="telemetry-alerts-toggle-btn" title="Toggle Live Alerts Drawer">
+                  <svg class="alerts-warning-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                  </svg>
+                  <span class="alerts-text">ALERTS</span>
+                  <span class="alerts-count-bubble" id="telemetry-header-alert-count">4</span>
+                </button>
               </div>
 
-              <!-- Vital 4: Pulse -->
-              <div class="vital-tile">
-                <span class="vital-tile-label">Pulse</span>
-                <div class="vital-tile-value-wrap">
-                  <span class="vital-tile-number" id="vital-val-pulse">102</span>
-                  <span class="vital-tile-unit">/min</span>
-                </div>
-                <span class="vital-tile-status status-stable" id="vital-status-pulse">(stable)</span>
-              </div>
+            </section>
 
-              <!-- Vital 5: Temperature -->
-              <div class="vital-tile">
-                <span class="vital-tile-label">Temperature</span>
-                <div class="vital-tile-value-wrap">
-                  <span class="vital-tile-number" id="vital-val-temp">37.8</span>
-                  <span class="vital-tile-unit">°C</span>
-                </div>
-                <span class="vital-tile-status status-stable" id="vital-status-temp">(stable)</span>
-              </div>
-            </div>
-
-            <!-- Vitals Over Time (last 24 hours + forecast) -->
-            <div class="report-section-header report-charts-header">
-              <h2 class="report-section-title">Vitals over time (last 24 hours + forecast)</h2>
-              <div class="charts-legend">
-                <span class="legend-item"><span class="legend-line line-actual"></span> Actual</span>
-                <span class="legend-item"><span class="legend-line line-forecast"></span> Forecast</span>
-                <span class="legend-item"><span class="legend-line line-threshold"></span> NEWS2 threshold</span>
-              </div>
-            </div>
-
-            <!-- 5 Interactive Chart.js Vitals Charts (3 Top Row, 2 Bottom Row) -->
-            <div class="vitals-charts-grid">
+            <!-- SUB-HEADER TOOLBAR (Matching Image 1) -->
+            <section class="telemetry-toolbar-strip" aria-label="Telemetry Controls & Risk Legend">
               
-              <!-- Chart 1: RR -->
-              <div class="vital-chart-card">
-                <h3 class="chart-title">Respiratory rate (RR)</h3>
-                <div class="chart-canvas-wrap">
-                  <canvas id="chart-rr"></canvas>
+              <!-- Left: Tab & Risk Legend -->
+              <div class="telemetry-toolbar-left">
+                <!-- Trends & Reports Pill -->
+                <button type="button" class="telemetry-pill-tab active" id="tab-trends-reports">
+                  Trends & Reports
+                </button>
+
+                <!-- Colored Risk Legend -->
+                <div class="telemetry-risk-legend" aria-label="Risk zones legend">
+                  <span class="legend-badge legend-normal">
+                    <span class="legend-dot dot-green" aria-hidden="true"></span>
+                    <span>Normal</span>
+                  </span>
+                  <span class="legend-badge legend-moderate">
+                    <span class="legend-dot dot-yellow" aria-hidden="true"></span>
+                    <span>Moderate Risk</span>
+                  </span>
+                  <span class="legend-badge legend-high">
+                    <span class="legend-dot dot-red" aria-hidden="true"></span>
+                    <span>High Risk</span>
+                  </span>
                 </div>
               </div>
 
-              <!-- Chart 2: SpO2 -->
-              <div class="vital-chart-card">
-                <h3 class="chart-title">Oxygen saturation (SpO₂)</h3>
-                <div class="chart-canvas-wrap">
-                  <canvas id="chart-spo2"></canvas>
+              <!-- Center/Right: Average note & Action Tools -->
+              <div class="telemetry-toolbar-right">
+                
+                <!-- Average Note -->
+                <div class="telemetry-avg-note" title="Values reflect continuous sliding window average">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                  </svg>
+                  <span>All values reflect average of last 30 mins</span>
                 </div>
-              </div>
 
-              <!-- Chart 3: Systolic BP -->
-              <div class="vital-chart-card">
-                <h3 class="chart-title">Systolic blood pressure</h3>
-                <div class="chart-canvas-wrap">
-                  <canvas id="chart-sbp"></canvas>
+                <!-- Download CSV -->
+                <button type="button" class="btn btn-ghost telemetry-action-btn" id="telemetry-csv-btn" title="Download Vitals CSV">
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                  </svg>
+                  <span>Download CSV</span>
+                </button>
+
+                <!-- Print Report -->
+                <button type="button" class="btn btn-ghost telemetry-action-btn" id="telemetry-print-btn" title="Print Telemetry Report">
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                    <rect x="6" y="14" width="12" height="8"></rect>
+                  </svg>
+                  <span>Print Report</span>
+                </button>
+
+                <!-- Date Picker Dropdown -->
+                <div class="telemetry-date-badge" id="telemetry-date-badge">
+                  <span id="telemetry-date-display">18 Sep 2026</span>
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
                 </div>
+
               </div>
 
-              <!-- Chart 4: Pulse -->
-              <div class="vital-chart-card">
-                <h3 class="chart-title">Heart rate (pulse)</h3>
-                <div class="chart-canvas-wrap">
-                  <canvas id="chart-pulse"></canvas>
-                </div>
-              </div>
+            </section>
 
-              <!-- Chart 5: Temperature -->
-              <div class="vital-chart-card">
-                <h3 class="chart-title">Temperature</h3>
-                <div class="chart-canvas-wrap">
-                  <canvas id="chart-temp"></canvas>
-                </div>
-              </div>
-
-            </div>
-
-            <!-- NEWS2 Score Over Time (Full Width Card) -->
-            <div class="report-news2-card">
-              <h3 class="news2-chart-title">NEWS2 score over time</h3>
-              <div class="news2-svg-container">
-                <canvas id="chart-news2"></canvas>
-              </div>
-            </div>
-
-            <!-- Patient Alert History Section -->
-            <div class="report-section-header">
-              <h2 class="report-section-title">Alert history for this patient</h2>
-            </div>
-
-            <div class="ward-table-wrapper report-alerts-table">
-              <div class="report-alerts-header" role="row">
-                <div class="col-alert-time">Time</div>
-                <div class="col-alert-event">Event</div>
-                <div class="col-alert-details">Details</div>
-              </div>
-              <div class="ward-table-body" id="report-alerts-body" role="rowgroup">
-                <!-- Dynamically populated or default rows -->
-                <div class="report-alert-row" role="row">
-                  <div class="col-alert-time">14:02</div>
-                  <div class="col-alert-event">
-                    <span class="summary-dot dot-high" aria-hidden="true"></span>
-                    <span class="event-text">Flagged high</span>
+            <!-- TELEMETRY MAIN WORKSPACE & ALERTS DRAWER (Matching Image 1) -->
+            <div class="telemetry-workspace-grid">
+              
+              <!-- LEFT & CENTER: STACKED MULTI-PARAMETER VITAL STRIPS -->
+              <div class="telemetry-streams-column">
+                
+                <!-- Shared Synchronized Timeline Axis Header -->
+                <div class="telemetry-timeline-header">
+                  <div class="timeline-header-spacer"></div>
+                  <div class="timeline-header-ticks">
+                    <span>12am</span>
+                    <span>1am</span>
+                    <span>2am</span>
+                    <span>3am</span>
+                    <span>4am</span>
+                    <span>5am</span>
+                    <span>6am</span>
+                    <span>7am</span>
+                    <span>8am</span>
+                    <span>9am</span>
+                    <span>10am</span>
+                    <span>11am</span>
+                    <span>12pm</span>
+                    <span>1pm</span>
                   </div>
-                  <div class="col-alert-details">NEWS2 9 — RR rising, SpO₂ falling</div>
                 </div>
 
-                <div class="report-alert-row" role="row">
-                  <div class="col-alert-time">11:17</div>
-                  <div class="col-alert-event">
-                    <span class="summary-dot dot-medium" aria-hidden="true"></span>
-                    <span class="event-text">Flagged medium</span>
+                <!-- Telemetry Stack Container -->
+                <div class="telemetry-rows-stack" id="telemetry-rows-stack">
+                  
+                  <!-- ROW 1: EWS (NEWS2) -->
+                  <div class="telemetry-row-card" data-metric="ews">
+                    <!-- Left Metric Tile -->
+                    <div class="telemetry-metric-tile">
+                      <div class="metric-icon-circle circle-ews">
+                        <span class="icon-letter">d</span>
+                      </div>
+                      <div class="metric-readout">
+                        <span class="metric-val" id="report-score-value">2</span>
+                        <span class="metric-lbl">EWS</span>
+                      </div>
+                    </div>
+                    <!-- Right Synchronized Strip Chart -->
+                    <div class="telemetry-chart-strip-wrap">
+                      <canvas id="telemetry-chart-ews" class="telemetry-canvas"></canvas>
+                    </div>
                   </div>
-                  <div class="col-alert-details">NEWS2 6 — increasing respiratory rate</div>
+
+                  <!-- ROW 2: HR (Heart Rate / Pulse) -->
+                  <div class="telemetry-row-card" data-metric="hr">
+                    <!-- Left Metric Tile -->
+                    <div class="telemetry-metric-tile">
+                      <div class="metric-icon-circle circle-hr">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                        </svg>
+                      </div>
+                      <div class="metric-readout">
+                        <span class="metric-val" id="telemetry-val-hr">75</span>
+                        <div class="metric-sub-labels">
+                          <span class="metric-lbl">HR</span>
+                          <span class="metric-unit">BPM</span>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Right Synchronized Strip Chart -->
+                    <div class="telemetry-chart-strip-wrap">
+                      <canvas id="telemetry-chart-hr" class="telemetry-canvas"></canvas>
+                    </div>
+                  </div>
+
+                  <!-- ROW 3: RR (Respiratory Rate) -->
+                  <div class="telemetry-row-card" data-metric="rr">
+                    <!-- Left Metric Tile -->
+                    <div class="telemetry-metric-tile">
+                      <div class="metric-icon-circle circle-rr">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#0284C7" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M7 13h10M7 9h10M9 17h6"></path>
+                          <path d="M12 3v18"></path>
+                        </svg>
+                      </div>
+                      <div class="metric-readout">
+                        <span class="metric-val" id="telemetry-val-rr">12</span>
+                        <div class="metric-sub-labels">
+                          <span class="metric-lbl">RR</span>
+                          <span class="metric-unit">RPM</span>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Right Synchronized Strip Chart -->
+                    <div class="telemetry-chart-strip-wrap">
+                      <canvas id="telemetry-chart-rr" class="telemetry-canvas"></canvas>
+                    </div>
+                  </div>
+
+                  <!-- ROW 4: BP(Sys) (Systolic BP) -->
+                  <div class="telemetry-row-card" data-metric="bpsys">
+                    <!-- Left Metric Tile -->
+                    <div class="telemetry-metric-tile">
+                      <div class="metric-icon-circle circle-bp">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#7C3AED" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+                        </svg>
+                      </div>
+                      <div class="metric-readout">
+                        <span class="metric-val" id="telemetry-val-bpsys">142</span>
+                        <div class="metric-sub-labels">
+                          <span class="metric-lbl">BP(Sys)</span>
+                          <span class="metric-unit">mmHg</span>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Right Synchronized Strip Chart -->
+                    <div class="telemetry-chart-strip-wrap">
+                      <canvas id="telemetry-chart-bpsys" class="telemetry-canvas"></canvas>
+                    </div>
+                  </div>
+
+                  <!-- ROW 5: BP(Dia) (Diastolic BP) -->
+                  <div class="telemetry-row-card" data-metric="bpdia">
+                    <!-- Left Metric Tile -->
+                    <div class="telemetry-metric-tile">
+                      <div class="metric-icon-circle circle-bp">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#7C3AED" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+                        </svg>
+                      </div>
+                      <div class="metric-readout">
+                        <span class="metric-val" id="telemetry-val-bpdia">97</span>
+                        <div class="metric-sub-labels">
+                          <span class="metric-lbl">BP(Dia)</span>
+                          <span class="metric-unit">mmHg</span>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Right Synchronized Strip Chart -->
+                    <div class="telemetry-chart-strip-wrap">
+                      <canvas id="telemetry-chart-bpdia" class="telemetry-canvas"></canvas>
+                    </div>
+                  </div>
+
+                  <!-- ROW 6: SpO2 (Oxygen Saturation) -->
+                  <div class="telemetry-row-card" data-metric="spo2">
+                    <!-- Left Metric Tile -->
+                    <div class="telemetry-metric-tile">
+                      <div class="metric-icon-circle circle-spo2">
+                        <span class="icon-subscript">O₂</span>
+                      </div>
+                      <div class="metric-readout">
+                        <span class="metric-val" id="telemetry-val-spo2">96</span>
+                        <div class="metric-sub-labels">
+                          <span class="metric-lbl">SpO₂</span>
+                          <span class="metric-unit">%</span>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Right Synchronized Strip Chart -->
+                    <div class="telemetry-chart-strip-wrap">
+                      <canvas id="telemetry-chart-spo2" class="telemetry-canvas"></canvas>
+                    </div>
+                  </div>
+
+                  <!-- ROW 7: Temp (Body Temperature) -->
+                  <div class="telemetry-row-card" data-metric="temp">
+                    <!-- Left Metric Tile -->
+                    <div class="telemetry-metric-tile">
+                      <div class="metric-icon-circle circle-temp">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#0D9488" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"></path>
+                        </svg>
+                      </div>
+                      <div class="metric-readout">
+                        <span class="metric-val" id="telemetry-val-temp">101.6</span>
+                        <div class="metric-sub-labels">
+                          <span class="metric-lbl">Temp</span>
+                          <span class="metric-unit">°F</span>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Right Synchronized Strip Chart -->
+                    <div class="telemetry-chart-strip-wrap">
+                      <canvas id="telemetry-chart-temp" class="telemetry-canvas"></canvas>
+                    </div>
+                  </div>
+
                 </div>
 
-                <div class="report-alert-row" role="row">
-                  <div class="col-alert-time">09:34</div>
-                  <div class="col-alert-event">
-                    <span class="summary-dot" style="background-color: #64748B;" aria-hidden="true"></span>
-                    <span class="event-text">Observations updated</span>
+                <!-- Live ML Deterioration Assessment Bottom Bar -->
+                <div class="telemetry-ml-banner" id="report-ml-card">
+                  <div class="ml-banner-left">
+                    <span class="ml-badge-icon">🧠</span>
+                    <div class="ml-banner-text">
+                      <div class="ml-title-row">
+                        <strong>XGBoost Deterioration Model (191 Features)</strong>
+                        <span class="ml-score-pill" id="ml-risk-tier">LOW RISK</span>
+                      </div>
+                      <p class="ml-banner-sub" id="ml-alert-text">Running live inference against Supabase vitals stream...</p>
+                    </div>
                   </div>
-                  <div class="col-alert-details">SpO₂ 92% → 91%, RR 20 → 24</div>
-                </div>
-
-                <div class="report-alert-row" role="row">
-                  <div class="col-alert-time">06:12</div>
-                  <div class="col-alert-event">
-                    <span class="summary-dot dot-medium" aria-hidden="true"></span>
-                    <span class="event-text">Flagged medium</span>
+                  <div class="ml-banner-right">
+                    <div class="ml-metric-stat">
+                      <span class="stat-lbl">Predicted Risk:</span>
+                      <span class="stat-num" id="ml-risk-score">0.084</span>
+                    </div>
+                    <div class="ml-metric-stat">
+                      <span class="stat-lbl">Alert Threshold:</span>
+                      <span class="stat-num">0.236</span>
+                    </div>
                   </div>
-                  <div class="col-alert-details">NEWS2 5 — temperature rising</div>
-                </div>
-
-                <div class="report-alert-row" role="row">
-                  <div class="col-alert-time">01:48</div>
-                  <div class="col-alert-event">
-                    <span class="summary-dot dot-low" aria-hidden="true"></span>
-                    <span class="event-text">Resolved</span>
-                  </div>
-                  <div class="col-alert-details">NEWS2 3 — back in range</div>
                 </div>
 
               </div>
+
+              <!-- RIGHT: LIVE WARD ALERTS DRAWER (Matching Image 1) -->
+              <aside class="telemetry-alerts-column" id="telemetry-alerts-column" aria-label="Ward Alerts Drawer">
+                
+                <!-- Bright Red Drawer Header -->
+                <div class="telemetry-alerts-head-strip">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                  </svg>
+                  <span class="head-title">ALERTS</span>
+                </div>
+
+                <!-- Stacked Patient Alerts Cards List -->
+                <div class="telemetry-alerts-cards-list" id="telemetry-alerts-list">
+                  
+                  <!-- Alert Card 1: Mei Chen (Critical RR) -->
+                  <div class="telemetry-alert-patient-card" data-bed="4B-10">
+                    <div class="card-left-info">
+                      <div class="alert-card-time">3:14 PM</div>
+                      <div class="alert-card-patient-name">Chen, Mei</div>
+                      <div class="alert-card-bed-id">BD-198010</div>
+                      <div class="alert-card-badge-pending">Action pending</div>
+                    </div>
+                    <div class="card-right-vital-badge badge-rr">
+                      <span class="badge-icon">🫁 RR</span>
+                      <span class="badge-num">28.7</span>
+                      <span class="badge-unit">RPM</span>
+                    </div>
+                  </div>
+
+                  <!-- Alert Card 2: Thomas Brown (Tachycardia HR) -->
+                  <div class="telemetry-alert-patient-card" data-bed="4B-08">
+                    <div class="card-left-info">
+                      <div class="alert-card-time">3:14 PM</div>
+                      <div class="alert-card-patient-name">Brown, Thomas</div>
+                      <div class="alert-card-bed-id">BD-198008</div>
+                    </div>
+                    <div class="card-right-vital-badge badge-hr">
+                      <span class="badge-icon">❤️ HR</span>
+                      <span class="badge-num">121</span>
+                      <span class="badge-unit">BPM</span>
+                    </div>
+                  </div>
+
+                  <!-- Alert Card 3: Margaret Wilson (NEWS2 9) -->
+                  <div class="telemetry-alert-patient-card active" data-bed="4B-07">
+                    <div class="card-left-info">
+                      <div class="alert-card-time">3:14 PM</div>
+                      <div class="alert-card-patient-name">Wilson, Margaret</div>
+                      <div class="alert-card-bed-id">BD-198007</div>
+                      <div class="alert-card-badge-pending">Current view</div>
+                    </div>
+                    <div class="card-right-vital-badge badge-ews">
+                      <span class="badge-icon">🔴 EWS</span>
+                      <span class="badge-num">9</span>
+                      <span class="badge-unit">SCORE</span>
+                    </div>
+                  </div>
+
+                  <!-- Alert Card 4: Oliver Martin (Elevated HR) -->
+                  <div class="telemetry-alert-patient-card" data-bed="4B-11">
+                    <div class="card-left-info">
+                      <div class="alert-card-time">3:14 PM</div>
+                      <div class="alert-card-patient-name">Martin, Oliver</div>
+                      <div class="alert-card-bed-id">BD-198011</div>
+                    </div>
+                    <div class="card-right-vital-badge badge-hr">
+                      <span class="badge-icon">❤️ HR</span>
+                      <span class="badge-num">96</span>
+                      <span class="badge-unit">BPM</span>
+                    </div>
+                  </div>
+
+                  <!-- Alert Card 5: Wilkins, Robert (Fever) -->
+                  <div class="telemetry-alert-patient-card" data-bed="4B-09">
+                    <div class="card-left-info">
+                      <div class="alert-card-time">3:14 PM</div>
+                      <div class="alert-card-patient-name">Wilkins, Robert</div>
+                      <div class="alert-card-bed-id">BD-198009</div>
+                    </div>
+                    <div class="card-right-vital-badge badge-temp">
+                      <span class="badge-icon">🌡️ Temp</span>
+                      <span class="badge-num">100.4</span>
+                      <span class="badge-unit">°F</span>
+                    </div>
+                  </div>
+
+                </div>
+
+              </aside>
+
             </div>
 
           </div>
+
 
           <!-- ============================================================
                SLOT 5: ALERTS / HISTORY LOG PAGE
